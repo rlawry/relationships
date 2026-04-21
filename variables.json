@@ -1,0 +1,861 @@
+{
+  "variables": [
+    {
+      "variable_name": "seasonal_atmospheric_yield_coherence",
+      "display_name": "Seasonal Atmospheric Yield Coherence",
+      "unit_abbreviation": "AYCU",
+      "unit_name": "Atmospheric Yield Coherence Unit"
+    },
+    {
+      "variable_name": "thermal_crop_sync_phase",
+      "display_name": "Thermal Crop Sync Phase",
+      "unit_abbreviation": "TCSI",
+      "unit_name": "Thermal Crop Synchronization Index"
+    },
+    {
+      "variable_name": "vapor_root_efficiency_score",
+      "display_name": "Vapor Root Efficiency Score",
+      "unit_abbreviation": "VREM",
+      "unit_name": "Vapor Root Efficiency Measure"
+    },
+    {
+      "variable_name": "solar_moisture_alignment_factor",
+      "display_name": "Solar Moisture Alignment Factor",
+      "unit_abbreviation": "SMAU",
+      "unit_name": "Solar Moisture Alignment Unit"
+    },
+    {
+      "variable_name": "agroclimatic_flux_ratio",
+      "display_name": "Agroclimatic Flux Ratio",
+      "unit_abbreviation": "AFQ",
+      "unit_name": "Agroclimatic Flux Quotient"
+    },
+    {
+      "variable_name": "barometric_harvest_stability",
+      "display_name": "Barometric Harvest Stability",
+      "unit_abbreviation": "BHSU",
+      "unit_name": "Barometric Harvest Stability Unit"
+    },
+    {
+      "variable_name": "photosynthetic_rainfall_coupling",
+      "display_name": "Photosynthetic Rainfall Coupling",
+      "unit_abbreviation": "PRCI",
+      "unit_name": "Photosynthetic Rainfall Coupling Index"
+    },
+    {
+      "variable_name": "seasonal_evapotranspiration_harmony",
+      "display_name": "Seasonal Evapotranspiration Harmony",
+      "unit_abbreviation": "SEHU",
+      "unit_name": "Seasonal Evapotranspiration Harmony Unit"
+    },
+    {
+      "variable_name": "carbon_loam_responsiveness",
+      "display_name": "Carbon Loam Responsiveness",
+      "unit_abbreviation": "CLRM",
+      "unit_name": "Carbon Loam Responsiveness Measure"
+    },
+    {
+      "variable_name": "radiative_pasture_optimization",
+      "display_name": "Radiative Pasture Optimization",
+      "unit_abbreviation": "RPOU",
+      "unit_name": "Radiative Pasture Optimization Unit"
+    },
+    {
+      "variable_name": "humidity_nutrient_transfer_rate",
+      "display_name": "Humidity Nutrient Transfer Rate",
+      "unit_abbreviation": "HNTI",
+      "unit_name": "Humidity Nutrient Transfer Index"
+    },
+    {
+      "variable_name": "windborne_pollination_efficiency",
+      "display_name": "Windborne Pollination Efficiency",
+      "unit_abbreviation": "WPEQ",
+      "unit_name": "Windborne Pollination Efficiency Quotient"
+    },
+    {
+      "variable_name": "thermal_canopy_retention",
+      "display_name": "Thermal Canopy Retention",
+      "unit_abbreviation": "TCRU",
+      "unit_name": "Thermal Canopy Retention Unit"
+    },
+    {
+      "variable_name": "soil_albedo_productivity",
+      "display_name": "Soil Albedo Productivity",
+      "unit_abbreviation": "SAPM",
+      "unit_name": "Soil Albedo Productivity Measure"
+    },
+    {
+      "variable_name": "precipitation_biomass_coordination",
+      "display_name": "Precipitation Biomass Coordination",
+      "unit_abbreviation": "PBCI",
+      "unit_name": "Precipitation Biomass Coordination Index"
+    },
+    {
+      "variable_name": "climatic_root_penetration_depth",
+      "display_name": "Climatic Root Penetration Depth",
+      "unit_abbreviation": "CRPU",
+      "unit_name": "Climatic Root Penetration Unit"
+    },
+    {
+      "variable_name": "greenhouse_field_stability",
+      "display_name": "Greenhouse Field Stability",
+      "unit_abbreviation": "GFSQ",
+      "unit_name": "Greenhouse Field Stability Quotient"
+    },
+    {
+      "variable_name": "agrothermal_vapor_loading",
+      "display_name": "Agrothermal Vapor Loading",
+      "unit_abbreviation": "AVLU",
+      "unit_name": "Agrothermal Vapor Loading Unit"
+    },
+    {
+      "variable_name": "dewpoint_grain_conversion",
+      "display_name": "Dewpoint Grain Conversion",
+      "unit_abbreviation": "DGCI",
+      "unit_name": "Dewpoint Grain Conversion Index"
+    },
+    {
+      "variable_name": "insolation_furrow_efficiency",
+      "display_name": "Insolation Furrow Efficiency",
+      "unit_abbreviation": "IFEM",
+      "unit_name": "Insolation Furrow Efficiency Measure"
+    },
+    {
+      "variable_name": "monsoon_nutrient_diffusion",
+      "display_name": "Monsoon Nutrient Diffusion",
+      "unit_abbreviation": "MNDU",
+      "unit_name": "Monsoon Nutrient Diffusion Unit"
+    },
+    {
+      "variable_name": "pasture_heat_moderation",
+      "display_name": "Pasture Heat Moderation",
+      "unit_abbreviation": "PHMI",
+      "unit_name": "Pasture Heat Moderation Index"
+    },
+    {
+      "variable_name": "crop_boundary_layer_utilization",
+      "display_name": "Crop Boundary Layer Utilization",
+      "unit_abbreviation": "CBLU",
+      "unit_name": "Crop Boundary Layer Utilization Unit"
+    },
+    {
+      "variable_name": "hydrologic_tiller_response",
+      "display_name": "Hydrologic Tiller Response",
+      "unit_abbreviation": "HTRQ",
+      "unit_name": "Hydrologic Tiller Response Quotient"
+    },
+    {
+      "variable_name": "convective_yield_buffer",
+      "display_name": "Convective Yield Buffer",
+      "unit_abbreviation": "CYBU",
+      "unit_name": "Convective Yield Buffer Unit"
+    },
+    {
+      "variable_name": "canopy_pressure_regulation",
+      "display_name": "Canopy Pressure Regulation",
+      "unit_abbreviation": "CPRI",
+      "unit_name": "Canopy Pressure Regulation Index"
+    },
+    {
+      "variable_name": "soil_moisture_resonance",
+      "display_name": "Soil Moisture Resonance",
+      "unit_abbreviation": "SMRM",
+      "unit_name": "Soil Moisture Resonance Measure"
+    },
+    {
+      "variable_name": "latent_harvest_transfer",
+      "display_name": "Latent Harvest Transfer",
+      "unit_abbreviation": "LHTU",
+      "unit_name": "Latent Harvest Transfer Unit"
+    },
+    {
+      "variable_name": "field_thermal_inertia",
+      "display_name": "Field Thermal Inertia",
+      "unit_abbreviation": "FTIQ",
+      "unit_name": "Field Thermal Inertia Quotient"
+    },
+    {
+      "variable_name": "agrobaric_saturation_level",
+      "display_name": "Agrobaric Saturation Level",
+      "unit_abbreviation": "ASI",
+      "unit_name": "Agrobaric Saturation Index"
+    },
+    {
+      "variable_name": "root_zone_cloud_coupling",
+      "display_name": "Root Zone Cloud Coupling",
+      "unit_abbreviation": "RCCU",
+      "unit_name": "Root Zone Cloud Coupling Unit"
+    },
+    {
+      "variable_name": "diurnal_fertility_modulation",
+      "display_name": "Diurnal Fertility Modulation",
+      "unit_abbreviation": "DFMM",
+      "unit_name": "Diurnal Fertility Modulation Measure"
+    },
+    {
+      "variable_name": "solar_mulch_absorption",
+      "display_name": "Solar Mulch Absorption",
+      "unit_abbreviation": "SMAQ",
+      "unit_name": "Solar Mulch Absorption Quotient"
+    },
+    {
+      "variable_name": "climate_furrow_persistence",
+      "display_name": "Climate Furrow Persistence",
+      "unit_abbreviation": "CFPU",
+      "unit_name": "Climate Furrow Persistence Unit"
+    },
+    {
+      "variable_name": "biomass_dew_retention",
+      "display_name": "Biomass Dew Retention",
+      "unit_abbreviation": "BDRI",
+      "unit_name": "Biomass Dew Retention Index"
+    },
+    {
+      "variable_name": "transpiration_gradient_efficiency",
+      "display_name": "Transpiration Gradient Efficiency",
+      "unit_abbreviation": "TGEU",
+      "unit_name": "Transpiration Gradient Efficiency Unit"
+    },
+    {
+      "variable_name": "seasonal_loam_acceleration",
+      "display_name": "Seasonal Loam Acceleration",
+      "unit_abbreviation": "SLAM",
+      "unit_name": "Seasonal Loam Acceleration Measure"
+    },
+    {
+      "variable_name": "rainfed_canopy_compression",
+      "display_name": "Rainfed Canopy Compression",
+      "unit_abbreviation": "RCCU2",
+      "unit_name": "Rainfed Canopy Compression Unit"
+    },
+    {
+      "variable_name": "methane_pasture_balance",
+      "display_name": "Methane Pasture Balance",
+      "unit_abbreviation": "MPBQ",
+      "unit_name": "Methane Pasture Balance Quotient"
+    },
+    {
+      "variable_name": "agronomic_jetstream_utilization",
+      "display_name": "Agronomic Jetstream Utilization",
+      "unit_abbreviation": "AJUI",
+      "unit_name": "Agronomic Jetstream Utilization Index"
+    },
+    {
+      "variable_name": "ozone_areal_drift_density",
+      "display_name": "Ozone Areal Drift Density",
+      "unit_abbreviation": "kg O₃/m²",
+      "unit_name": "Ozone Areal Drift Density"
+    },
+    {
+      "variable_name": "ammonia_thermal_volume_loading",
+      "display_name": "Ammonia Thermal Volume Loading",
+      "unit_abbreviation": "mol NH₃·K/m³",
+      "unit_name": "Ammonia Thermal Volume Loading"
+    },
+    {
+      "variable_name": "carbon_dioxide_pressure_area_ratio",
+      "display_name": "Carbon Dioxide Pressure Area Ratio",
+      "unit_abbreviation": "Pa·m² CO₂/mol",
+      "unit_name": "Carbon Dioxide Pressure Area Ratio"
+    },
+    {
+      "variable_name": "methane_linear_time_burden",
+      "display_name": "Methane Linear Time Burden",
+      "unit_abbreviation": "kg CH₄·s/m",
+      "unit_name": "Methane Linear Time Burden"
+    },
+    {
+      "variable_name": "nitrogen_dioxide_radiant_surface_dose",
+      "display_name": "Nitrogen Dioxide Radiant Surface Dose",
+      "unit_abbreviation": "J NO₂/m²",
+      "unit_name": "Nitrogen Dioxide Radiant Surface Dose"
+    },
+    {
+      "variable_name": "hydrogen_sulfide_pressure_temperature_loading",
+      "display_name": "Hydrogen Sulfide Pressure Temperature Loading",
+      "unit_abbreviation": "mol H₂S·Pa/K",
+      "unit_name": "Hydrogen Sulfide Pressure Temperature Loading"
+    },
+    {
+      "variable_name": "sulfur_dioxide_thermal_density_gradient",
+      "display_name": "Sulfur Dioxide Thermal Density Gradient",
+      "unit_abbreviation": "kg SO₂/(m³·K)",
+      "unit_name": "Sulfur Dioxide Thermal Density Gradient"
+    },
+    {
+      "variable_name": "carbon_dioxide_area_time_molar_spread",
+      "display_name": "Carbon Dioxide Area Time Molar Spread",
+      "unit_abbreviation": "m² CO₂/(s·mol)",
+      "unit_name": "Carbon Dioxide Area Time Molar Spread"
+    },
+    {
+      "variable_name": "oxygen_thermal_linear_molar_index",
+      "display_name": "Oxygen Thermal Linear Molar Index",
+      "unit_abbreviation": "K·mol O₂/m",
+      "unit_name": "Oxygen Thermal Linear Molar Index"
+    },
+    {
+      "variable_name": "ammonia_pressure_surface_mass_load",
+      "display_name": "Ammonia Pressure Surface Mass Load",
+      "unit_abbreviation": "Pa·kg NH₃/m²",
+      "unit_name": "Ammonia Pressure Surface Mass Load"
+    },
+    {
+      "variable_name": "methanol_radiant_molar_density",
+      "display_name": "Methanol Radiant Molar Density",
+      "unit_abbreviation": "J·mol CH₃OH/m³",
+      "unit_name": "Methanol Radiant Molar Density"
+    },
+    {
+      "variable_name": "nitrate_accelerative_linear_mass_index",
+      "display_name": "Nitrate Accelerative Linear Mass Index",
+      "unit_abbreviation": "kg NO₃/(m·s²)",
+      "unit_name": "Nitrate Accelerative Linear Mass Index"
+    },
+    {
+      "variable_name": "carbon_dioxide_thermal_time_molar_drift",
+      "display_name": "Carbon Dioxide Thermal Time Molar Drift",
+      "unit_abbreviation": "mol CO₂·m/(K·s)",
+      "unit_name": "Carbon Dioxide Thermal Time Molar Drift"
+    },
+    {
+      "variable_name": "hydrogen_peroxide_pressure_time_ratio",
+      "display_name": "Hydrogen Peroxide Pressure Time Ratio",
+      "unit_abbreviation": "Pa·s H₂O₂/mol",
+      "unit_name": "Hydrogen Peroxide Pressure Time Ratio"
+    },
+    {
+      "variable_name": "ethane_thermal_linear_mass_density",
+      "display_name": "Ethane Thermal Linear Mass Density",
+      "unit_abbreviation": "kg C₂H₆/(m·K)",
+      "unit_name": "Ethane Thermal Linear Mass Density"
+    },
+    {
+      "variable_name": "ammonium_radiative_surface_flux",
+      "display_name": "Ammonium Radiative Surface Flux",
+      "unit_abbreviation": "J NH₄/(m²·s)",
+      "unit_name": "Ammonium Radiative Surface Flux"
+    },
+    {
+      "variable_name": "sulfate_thermal_areal_mole_register",
+      "display_name": "Sulfate Thermal Areal Mole Register",
+      "unit_abbreviation": "mol SO₄·m²/K",
+      "unit_name": "Sulfate Thermal Areal Mole Register"
+    },
+    {
+      "variable_name": "methane_pressure_length_time_coefficient",
+      "display_name": "Methane Pressure Length Time Coefficient",
+      "unit_abbreviation": "Pa·m CH₄/(s·mol)",
+      "unit_name": "Methane Pressure Length Time Coefficient"
+    },
+    {
+      "variable_name": "oxygen_thermal_time_density_burden",
+      "display_name": "Oxygen Thermal Time Density Burden",
+      "unit_abbreviation": "kg O₂·K/(m³·s)",
+      "unit_name": "Oxygen Thermal Time Density Burden"
+    },
+    {
+      "variable_name": "glucose_thermal_time_acceleration_load",
+      "display_name": "Glucose Thermal Time Acceleration Load",
+      "unit_abbreviation": "mol C₆H₁₂O₆·K/s²",
+      "unit_name": "Glucose Thermal Time Acceleration Load"
+    }
+  ],
+  "relationship_webs": [
+    {
+      "web_name": "Seasonal Atmospheric Yield Coherence Web",
+      "relationships": [
+        {
+          "x_variable": "seasonal_atmospheric_yield_coherence",
+          "y_variable": "thermal_crop_sync_phase",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "thermal_crop_sync_phase = 0.544 * seasonal_atmospheric_yield_coherence + 19.4",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "thermal_crop_sync_phase",
+          "y_variable": "vapor_root_efficiency_score",
+          "relationship_type": "proportional",
+          "equation": "vapor_root_efficiency_score = 0.110118 * thermal_crop_sync_phase",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "vapor_root_efficiency_score",
+          "y_variable": "solar_moisture_alignment_factor",
+          "relationship_type": "negative linear",
+          "equation": "solar_moisture_alignment_factor = -13.033333 * vapor_root_efficiency_score + 203.2",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "solar_moisture_alignment_factor",
+          "y_variable": "seasonal_atmospheric_yield_coherence",
+          "relationship_type": "non-linear",
+          "equation": "seasonal_atmospheric_yield_coherence = 12 + 76 * ((solar_moisture_alignment_factor - 10) / 230)^2",
+          "visible_shape": "non-linear curve"
+        }
+      ]
+    },
+    {
+      "web_name": "Agroclimatic Flux Ratio Web",
+      "relationships": [
+        {
+          "x_variable": "agroclimatic_flux_ratio",
+          "y_variable": "barometric_harvest_stability",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "barometric_harvest_stability = 27.2 * agroclimatic_flux_ratio + -12.8",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "barometric_harvest_stability",
+          "y_variable": "photosynthetic_rainfall_coupling",
+          "relationship_type": "proportional",
+          "equation": "photosynthetic_rainfall_coupling = 11.7 * barometric_harvest_stability",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "photosynthetic_rainfall_coupling",
+          "y_variable": "seasonal_evapotranspiration_harmony",
+          "relationship_type": "negative linear",
+          "equation": "seasonal_evapotranspiration_harmony = -0.272 * photosynthetic_rainfall_coupling + 140.8",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "seasonal_evapotranspiration_harmony",
+          "y_variable": "agroclimatic_flux_ratio",
+          "relationship_type": "non-linear",
+          "equation": "agroclimatic_flux_ratio = 0.12 + 0.76 * ((seasonal_evapotranspiration_harmony - 40) / 120)^2",
+          "visible_shape": "non-linear curve"
+        }
+      ]
+    },
+    {
+      "web_name": "Carbon Loam Responsiveness Web",
+      "relationships": [
+        {
+          "x_variable": "carbon_loam_responsiveness",
+          "y_variable": "radiative_pasture_optimization",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "radiative_pasture_optimization = 0.01088 * carbon_loam_responsiveness + 2.44",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "radiative_pasture_optimization",
+          "y_variable": "humidity_nutrient_transfer_rate",
+          "relationship_type": "proportional",
+          "equation": "humidity_nutrient_transfer_rate = 6.5 * radiative_pasture_optimization",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "humidity_nutrient_transfer_rate",
+          "y_variable": "windborne_pollination_efficiency",
+          "relationship_type": "negative linear",
+          "equation": "windborne_pollination_efficiency = -3.173333 * humidity_nutrient_transfer_rate + 344",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "windborne_pollination_efficiency",
+          "y_variable": "carbon_loam_responsiveness",
+          "relationship_type": "non-linear",
+          "equation": "carbon_loam_responsiveness = 60 + 380 * ((windborne_pollination_efficiency - 50) / 350)^2",
+          "visible_shape": "non-linear curve"
+        }
+      ]
+    },
+    {
+      "web_name": "Thermal Canopy Retention Web",
+      "relationships": [
+        {
+          "x_variable": "thermal_canopy_retention",
+          "y_variable": "soil_albedo_productivity",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "soil_albedo_productivity = 3.4 * thermal_canopy_retention + 62",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "soil_albedo_productivity",
+          "y_variable": "precipitation_biomass_coordination",
+          "relationship_type": "proportional",
+          "equation": "precipitation_biomass_coordination = 0.2964 * soil_albedo_productivity",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "precipitation_biomass_coordination",
+          "y_variable": "climatic_root_penetration_depth",
+          "relationship_type": "negative linear",
+          "equation": "climatic_root_penetration_depth = -0.272 * precipitation_biomass_coordination + 30.64",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "climatic_root_penetration_depth",
+          "y_variable": "thermal_canopy_retention",
+          "relationship_type": "non-linear",
+          "equation": "thermal_canopy_retention = 1 + 38 * ((climatic_root_penetration_depth - 0) / 30)^2",
+          "visible_shape": "non-linear curve"
+        }
+      ]
+    },
+    {
+      "web_name": "Greenhouse Field Stability Web",
+      "relationships": [
+        {
+          "x_variable": "greenhouse_field_stability",
+          "y_variable": "agrothermal_vapor_loading",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "agrothermal_vapor_loading = 0.204 * greenhouse_field_stability + -13.08",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "agrothermal_vapor_loading",
+          "y_variable": "dewpoint_grain_conversion",
+          "relationship_type": "proportional",
+          "equation": "dewpoint_grain_conversion = 39 * agrothermal_vapor_loading",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "dewpoint_grain_conversion",
+          "y_variable": "insolation_furrow_efficiency",
+          "relationship_type": "negative linear",
+          "equation": "insolation_furrow_efficiency = -0.051 * dewpoint_grain_conversion + 55.5",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "insolation_furrow_efficiency",
+          "y_variable": "greenhouse_field_stability",
+          "relationship_type": "non-linear",
+          "equation": "greenhouse_field_stability = 87.2 + 45.6 * ((insolation_furrow_efficiency - 0) / 60)^2",
+          "visible_shape": "non-linear curve"
+        }
+      ]
+    },
+    {
+      "web_name": "Monsoon Nutrient Diffusion Web",
+      "relationships": [
+        {
+          "x_variable": "monsoon_nutrient_diffusion",
+          "y_variable": "pasture_heat_moderation",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "pasture_heat_moderation = 0.17 * monsoon_nutrient_diffusion + 24.9",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "pasture_heat_moderation",
+          "y_variable": "crop_boundary_layer_utilization",
+          "relationship_type": "proportional",
+          "equation": "crop_boundary_layer_utilization = 0.027857 * pasture_heat_moderation",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "crop_boundary_layer_utilization",
+          "y_variable": "hydrologic_tiller_response",
+          "relationship_type": "negative linear",
+          "equation": "hydrologic_tiller_response = -217.6 * crop_boundary_layer_utilization + 672",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "hydrologic_tiller_response",
+          "y_variable": "monsoon_nutrient_diffusion",
+          "relationship_type": "non-linear proportional",
+          "equation": "monsoon_nutrient_diffusion = 220 * (hydrologic_tiller_response / 800)^2",
+          "visible_shape": "non-linear curve through origin"
+        }
+      ]
+    },
+    {
+      "web_name": "Convective Yield Buffer Web",
+      "relationships": [
+        {
+          "x_variable": "convective_yield_buffer",
+          "y_variable": "canopy_pressure_regulation",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "canopy_pressure_regulation = 1.133333 * convective_yield_buffer + 947.333333",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "canopy_pressure_regulation",
+          "y_variable": "soil_moisture_resonance",
+          "relationship_type": "proportional",
+          "equation": "soil_moisture_resonance = 0.009927 * canopy_pressure_regulation",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "soil_moisture_resonance",
+          "y_variable": "latent_harvest_transfer",
+          "relationship_type": "negative linear",
+          "equation": "latent_harvest_transfer = -2.331429 * soil_moisture_resonance + 40.32",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "latent_harvest_transfer",
+          "y_variable": "convective_yield_buffer",
+          "relationship_type": "non-linear proportional",
+          "equation": "convective_yield_buffer = 110 * (latent_harvest_transfer / 48)^2",
+          "visible_shape": "non-linear curve through origin"
+        }
+      ]
+    },
+    {
+      "web_name": "Field Thermal Inertia Web",
+      "relationships": [
+        {
+          "x_variable": "field_thermal_inertia",
+          "y_variable": "agrobaric_saturation_level",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "agrobaric_saturation_level = 6.8 * field_thermal_inertia + 18",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "agrobaric_saturation_level",
+          "y_variable": "root_zone_cloud_coupling",
+          "relationship_type": "proportional",
+          "equation": "root_zone_cloud_coupling = 2.808 * agrobaric_saturation_level",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "root_zone_cloud_coupling",
+          "y_variable": "diurnal_fertility_modulation",
+          "relationship_type": "negative linear",
+          "equation": "diurnal_fertility_modulation = -0.120889 * root_zone_cloud_coupling + 53.76",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "diurnal_fertility_modulation",
+          "y_variable": "field_thermal_inertia",
+          "relationship_type": "non-linear proportional",
+          "equation": "field_thermal_inertia = 10 * (diurnal_fertility_modulation / 64)^2",
+          "visible_shape": "non-linear curve through origin"
+        }
+      ]
+    },
+    {
+      "web_name": "Solar Mulch Absorption Web",
+      "relationships": [
+        {
+          "x_variable": "solar_mulch_absorption",
+          "y_variable": "climate_furrow_persistence",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "climate_furrow_persistence = 22.1 * solar_mulch_absorption + 9.36",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "climate_furrow_persistence",
+          "y_variable": "biomass_dew_retention",
+          "relationship_type": "proportional",
+          "equation": "biomass_dew_retention = 1.95 * climate_furrow_persistence",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "biomass_dew_retention",
+          "y_variable": "transpiration_gradient_efficiency",
+          "relationship_type": "negative linear",
+          "equation": "transpiration_gradient_efficiency = -0.041846 * biomass_dew_retention + 6.72",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "transpiration_gradient_efficiency",
+          "y_variable": "solar_mulch_absorption",
+          "relationship_type": "non-linear proportional",
+          "equation": "solar_mulch_absorption = 1.6 * (transpiration_gradient_efficiency / 8)^2",
+          "visible_shape": "non-linear curve through origin"
+        }
+      ]
+    },
+    {
+      "web_name": "Seasonal Loam Acceleration Web",
+      "relationships": [
+        {
+          "x_variable": "seasonal_loam_acceleration",
+          "y_variable": "rainfed_canopy_compression",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "rainfed_canopy_compression = 3.049949 * seasonal_loam_acceleration + 7.92",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "rainfed_canopy_compression",
+          "y_variable": "methane_pasture_balance",
+          "relationship_type": "proportional",
+          "equation": "methane_pasture_balance = 0.886364 * rainfed_canopy_compression",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "methane_pasture_balance",
+          "y_variable": "agronomic_jetstream_utilization",
+          "relationship_type": "negative linear",
+          "equation": "agronomic_jetstream_utilization = -4.896 * methane_pasture_balance + 360",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "agronomic_jetstream_utilization",
+          "y_variable": "seasonal_loam_acceleration",
+          "relationship_type": "non-linear proportional",
+          "equation": "seasonal_loam_acceleration = 9.81 * (agronomic_jetstream_utilization / 720)^2",
+          "visible_shape": "non-linear curve through origin"
+        }
+      ]
+    },
+    {
+      "web_name": "Ozone Areal Drift Density Web",
+      "relationships": [
+        {
+          "x_variable": "ozone_areal_drift_density",
+          "y_variable": "ammonia_thermal_volume_loading",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "ammonia_thermal_volume_loading = 8.311111 * ozone_areal_drift_density + 39.6",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "ammonia_thermal_volume_loading",
+          "y_variable": "carbon_dioxide_pressure_area_ratio",
+          "relationship_type": "proportional",
+          "equation": "carbon_dioxide_pressure_area_ratio = 0.336818 * ammonia_thermal_volume_loading",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "carbon_dioxide_pressure_area_ratio",
+          "y_variable": "methane_linear_time_burden",
+          "relationship_type": "negative linear",
+          "equation": "methane_linear_time_burden = -0.429474 * carbon_dioxide_pressure_area_ratio + 50.4",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "methane_linear_time_burden",
+          "y_variable": "ozone_areal_drift_density",
+          "relationship_type": "non-linear proportional",
+          "equation": "ozone_areal_drift_density = 18 * (methane_linear_time_burden / 60)^2",
+          "visible_shape": "non-linear curve through origin"
+        }
+      ]
+    },
+    {
+      "web_name": "Nitrogen Dioxide Radiant Surface Dose Web",
+      "relationships": [
+        {
+          "x_variable": "nitrogen_dioxide_radiant_surface_dose",
+          "y_variable": "hydrogen_sulfide_pressure_temperature_loading",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "hydrogen_sulfide_pressure_temperature_loading = 0.317333 * nitrogen_dioxide_radiant_surface_dose + 25.2",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "hydrogen_sulfide_pressure_temperature_loading",
+          "y_variable": "sulfur_dioxide_thermal_density_gradient",
+          "relationship_type": "proportional",
+          "equation": "sulfur_dioxide_thermal_density_gradient = 0.267429 * hydrogen_sulfide_pressure_temperature_loading",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "sulfur_dioxide_thermal_density_gradient",
+          "y_variable": "carbon_dioxide_area_time_molar_spread",
+          "relationship_type": "negative linear",
+          "equation": "carbon_dioxide_area_time_molar_spread = -0.136 * sulfur_dioxide_thermal_density_gradient + 8.448",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "carbon_dioxide_area_time_molar_spread",
+          "y_variable": "nitrogen_dioxide_radiant_surface_dose",
+          "relationship_type": "non-linear proportional",
+          "equation": "nitrogen_dioxide_radiant_surface_dose = 300 * (carbon_dioxide_area_time_molar_spread / 12)^2",
+          "visible_shape": "non-linear curve through origin"
+        }
+      ]
+    },
+    {
+      "web_name": "Oxygen Thermal Linear Molar Index Web",
+      "relationships": [
+        {
+          "x_variable": "oxygen_thermal_linear_molar_index",
+          "y_variable": "ammonia_pressure_surface_mass_load",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "ammonia_pressure_surface_mass_load = 3.2 * oxygen_thermal_linear_molar_index + 72",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "ammonia_pressure_surface_mass_load",
+          "y_variable": "methanol_radiant_molar_density",
+          "relationship_type": "proportional",
+          "equation": "methanol_radiant_molar_density = 0.312 * ammonia_pressure_surface_mass_load",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "methanol_radiant_molar_density",
+          "y_variable": "nitrate_accelerative_linear_mass_index",
+          "relationship_type": "negative linear",
+          "equation": "nitrate_accelerative_linear_mass_index = -0.041692 * methanol_radiant_molar_density + 8.2404",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "nitrate_accelerative_linear_mass_index",
+          "y_variable": "oxygen_thermal_linear_molar_index",
+          "relationship_type": "non-linear",
+          "equation": "oxygen_thermal_linear_molar_index = 10.2 + 64.6 * ((nitrate_accelerative_linear_mass_index - 0) / 9.81)^2",
+          "visible_shape": "non-linear curve"
+        }
+      ]
+    },
+    {
+      "web_name": "Carbon Dioxide Thermal Time Molar Drift Web",
+      "relationships": [
+        {
+          "x_variable": "carbon_dioxide_thermal_time_molar_drift",
+          "y_variable": "hydrogen_peroxide_pressure_time_ratio",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "hydrogen_peroxide_pressure_time_ratio = 0.836923 * carbon_dioxide_thermal_time_molar_drift + 11.52",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "hydrogen_peroxide_pressure_time_ratio",
+          "y_variable": "ethane_thermal_linear_mass_density",
+          "relationship_type": "proportional",
+          "equation": "ethane_thermal_linear_mass_density = 0.365625 * hydrogen_peroxide_pressure_time_ratio",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "ethane_thermal_linear_mass_density",
+          "y_variable": "ammonium_radiative_surface_flux",
+          "relationship_type": "negative linear",
+          "equation": "ammonium_radiative_surface_flux = -2.493333 * ethane_thermal_linear_mass_density + 92.4",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "ammonium_radiative_surface_flux",
+          "y_variable": "carbon_dioxide_thermal_time_molar_drift",
+          "relationship_type": "non-linear proportional",
+          "equation": "carbon_dioxide_thermal_time_molar_drift = 52 * (ammonium_radiative_surface_flux / 110)^2",
+          "visible_shape": "non-linear curve through origin"
+        }
+      ]
+    },
+    {
+      "web_name": "Sulfate Thermal Areal Mole Register Web",
+      "relationships": [
+        {
+          "x_variable": "sulfate_thermal_areal_mole_register",
+          "y_variable": "methane_pressure_length_time_coefficient",
+          "relationship_type": "linear (non-proportional)",
+          "equation": "methane_pressure_length_time_coefficient = 0.204 * sulfate_thermal_areal_mole_register + 13.5",
+          "visible_shape": "positive straight line"
+        },
+        {
+          "x_variable": "methane_pressure_length_time_coefficient",
+          "y_variable": "oxygen_thermal_time_density_burden",
+          "relationship_type": "proportional",
+          "equation": "oxygen_thermal_time_density_burden = 0.4576 * methane_pressure_length_time_coefficient",
+          "visible_shape": "straight line through origin"
+        },
+        {
+          "x_variable": "oxygen_thermal_time_density_burden",
+          "y_variable": "glucose_thermal_time_acceleration_load",
+          "relationship_type": "negative linear",
+          "equation": "glucose_thermal_time_acceleration_load = -12.363636 * oxygen_thermal_time_density_burden + 672",
+          "visible_shape": "negative straight line"
+        },
+        {
+          "x_variable": "glucose_thermal_time_acceleration_load",
+          "y_variable": "sulfate_thermal_areal_mole_register",
+          "relationship_type": "non-linear proportional",
+          "equation": "sulfate_thermal_areal_mole_register = 250 * (glucose_thermal_time_acceleration_load / 800)^2",
+          "visible_shape": "non-linear curve through origin"
+        }
+      ]
+    }
+  ]
+}

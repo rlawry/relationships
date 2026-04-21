@@ -1,0 +1,365 @@
+{
+  "category": "climate_and_agricultural_efficiency_nonsense_units",
+  "units": [
+    {
+      "name": "Atmospheric Yield Coherence Unit",
+      "abbreviation": "AYCU",
+      "axis_min": 0.0,
+      "axis_max": 100.0
+    },
+    {
+      "name": "Thermal Crop Synchronization Index",
+      "abbreviation": "TCSI",
+      "axis_min": 5.0,
+      "axis_max": 85.0
+    },
+    {
+      "name": "Vapor Root Efficiency Measure",
+      "abbreviation": "VREM",
+      "axis_min": 0.0,
+      "axis_max": 12.0
+    },
+    {
+      "name": "Solar Moisture Alignment Unit",
+      "abbreviation": "SMAU",
+      "axis_min": 10.0,
+      "axis_max": 240.0
+    },
+    {
+      "name": "Agroclimatic Flux Quotient",
+      "abbreviation": "AFQ",
+      "axis_min": 0.0,
+      "axis_max": 1.0
+    },
+    {
+      "name": "Barometric Harvest Stability Unit",
+      "abbreviation": "BHSU",
+      "axis_min": -20.0,
+      "axis_max": 20.0
+    },
+    {
+      "name": "Photosynthetic Rainfall Coupling Index",
+      "abbreviation": "PRCI",
+      "axis_min": 0.0,
+      "axis_max": 300.0
+    },
+    {
+      "name": "Seasonal Evapotranspiration Harmony Unit",
+      "abbreviation": "SEHU",
+      "axis_min": 40.0,
+      "axis_max": 160.0
+    },
+    {
+      "name": "Carbon Loam Responsiveness Measure",
+      "abbreviation": "CLRM",
+      "axis_min": 0.0,
+      "axis_max": 500.0
+    },
+    {
+      "name": "Radiative Pasture Optimization Unit",
+      "abbreviation": "RPOU",
+      "axis_min": 1.0,
+      "axis_max": 9.0
+    },
+    {
+      "name": "Humidity Nutrient Transfer Index",
+      "abbreviation": "HNTI",
+      "axis_min": 0.0,
+      "axis_max": 75.0
+    },
+    {
+      "name": "Windborne Pollination Efficiency Quotient",
+      "abbreviation": "WPEQ",
+      "axis_min": 50.0,
+      "axis_max": 400.0
+    },
+    {
+      "name": "Thermal Canopy Retention Unit",
+      "abbreviation": "TCRU",
+      "axis_min": -5.0,
+      "axis_max": 45.0
+    },
+    {
+      "name": "Soil Albedo Productivity Measure",
+      "abbreviation": "SAPM",
+      "axis_min": 0.0,
+      "axis_max": 250.0
+    },
+    {
+      "name": "Precipitation Biomass Coordination Index",
+      "abbreviation": "PBCI",
+      "axis_min": 20.0,
+      "axis_max": 95.0
+    },
+    {
+      "name": "Climatic Root Penetration Unit",
+      "abbreviation": "CRPU",
+      "axis_min": 0.0,
+      "axis_max": 30.0
+    },
+    {
+      "name": "Greenhouse Field Stability Quotient",
+      "abbreviation": "GFSQ",
+      "axis_min": 80.0,
+      "axis_max": 140.0
+    },
+    {
+      "name": "Agrothermal Vapor Loading Unit",
+      "abbreviation": "AVLU",
+      "axis_min": 0.0,
+      "axis_max": 18.0
+    },
+    {
+      "name": "Dewpoint Grain Conversion Index",
+      "abbreviation": "DGCI",
+      "axis_min": 100.0,
+      "axis_max": 900.0
+    },
+    {
+      "name": "Insolation Furrow Efficiency Measure",
+      "abbreviation": "IFEM",
+      "axis_min": 0.0,
+      "axis_max": 60.0
+    },
+    {
+      "name": "Monsoon Nutrient Diffusion Unit",
+      "abbreviation": "MNDU",
+      "axis_min": 0.0,
+      "axis_max": 220.0
+    },
+    {
+      "name": "Pasture Heat Moderation Index",
+      "abbreviation": "PHMI",
+      "axis_min": 15.0,
+      "axis_max": 70.0
+    },
+    {
+      "name": "Crop Boundary Layer Utilization Unit",
+      "abbreviation": "CBLU",
+      "axis_min": 0.0,
+      "axis_max": 2.5
+    },
+    {
+      "name": "Hydrologic Tiller Response Quotient",
+      "abbreviation": "HTRQ",
+      "axis_min": 0.0,
+      "axis_max": 800.0
+    },
+    {
+      "name": "Convective Yield Buffer Unit",
+      "abbreviation": "CYBU",
+      "axis_min": -10.0,
+      "axis_max": 110.0
+    },
+    {
+      "name": "Canopy Pressure Regulation Index",
+      "abbreviation": "CPRI",
+      "axis_min": 900.0,
+      "axis_max": 1100.0
+    },
+    {
+      "name": "Soil Moisture Resonance Measure",
+      "abbreviation": "SMRM",
+      "axis_min": 0.0,
+      "axis_max": 14.0
+    },
+    {
+      "name": "Latent Harvest Transfer Unit",
+      "abbreviation": "LHTU",
+      "axis_min": 0.0,
+      "axis_max": 48.0
+    },
+    {
+      "name": "Field Thermal Inertia Quotient",
+      "abbreviation": "FTIQ",
+      "axis_min": 0.0,
+      "axis_max": 10.0
+    },
+    {
+      "name": "Agrobaric Saturation Index",
+      "abbreviation": "ASI",
+      "axis_min": 0.0,
+      "axis_max": 100.0
+    },
+    {
+      "name": "Root Zone Cloud Coupling Unit",
+      "abbreviation": "RCCU",
+      "axis_min": 0.0,
+      "axis_max": 360.0
+    },
+    {
+      "name": "Diurnal Fertility Modulation Measure",
+      "abbreviation": "DFMM",
+      "axis_min": 0.0,
+      "axis_max": 64.0
+    },
+    {
+      "name": "Solar Mulch Absorption Quotient",
+      "abbreviation": "SMAQ",
+      "axis_min": 0.0,
+      "axis_max": 1.6
+    },
+    {
+      "name": "Climate Furrow Persistence Unit",
+      "abbreviation": "CFPU",
+      "axis_min": 0.0,
+      "axis_max": 52.0
+    },
+    {
+      "name": "Biomass Dew Retention Index",
+      "abbreviation": "BDRI",
+      "axis_min": 0.0,
+      "axis_max": 130.0
+    },
+    {
+      "name": "Transpiration Gradient Efficiency Unit",
+      "abbreviation": "TGEU",
+      "axis_min": 0.0,
+      "axis_max": 8.0
+    },
+    {
+      "name": "Seasonal Loam Acceleration Measure",
+      "abbreviation": "SLAM",
+      "axis_min": 0.0,
+      "axis_max": 9.81
+    },
+    {
+      "name": "Rainfed Canopy Compression Unit",
+      "abbreviation": "RCCU2",
+      "axis_min": 0.0,
+      "axis_max": 44.0
+    },
+    {
+      "name": "Methane Pasture Balance Quotient",
+      "abbreviation": "MPBQ",
+      "axis_min": -50.0,
+      "axis_max": 50.0
+    },
+    {
+      "name": "Agronomic Jetstream Utilization Index",
+      "abbreviation": "AJUI",
+      "axis_min": 0.0,
+      "axis_max": 720.0
+    },
+    {
+      "name": "Ozone Areal Drift Density",
+      "abbreviation": "kg O₃/m²",
+      "axis_min": 0.0,
+      "axis_max": 18.0
+    },
+    {
+      "name": "Ammonia Thermal Volume Loading",
+      "abbreviation": "mol NH₃·K/m³",
+      "axis_min": 0.0,
+      "axis_max": 220.0
+    },
+    {
+      "name": "Carbon Dioxide Pressure Area Ratio",
+      "abbreviation": "Pa·m² CO₂/mol",
+      "axis_min": 0.0,
+      "axis_max": 95.0
+    },
+    {
+      "name": "Methane Linear Time Burden",
+      "abbreviation": "kg CH₄·s/m",
+      "axis_min": 0.0,
+      "axis_max": 60.0
+    },
+    {
+      "name": "Nitrogen Dioxide Radiant Surface Dose",
+      "abbreviation": "J NO₂/m²",
+      "axis_min": 0.0,
+      "axis_max": 300.0
+    },
+    {
+      "name": "Hydrogen Sulfide Pressure Temperature Loading",
+      "abbreviation": "mol H₂S·Pa/K",
+      "axis_min": 0.0,
+      "axis_max": 140.0
+    },
+    {
+      "name": "Sulfur Dioxide Thermal Density Gradient",
+      "abbreviation": "kg SO₂/(m³·K)",
+      "axis_min": -12.0,
+      "axis_max": 48.0
+    },
+    {
+      "name": "Carbon Dioxide Area Time Molar Spread",
+      "abbreviation": "m² CO₂/(s·mol)",
+      "axis_min": 0.0,
+      "axis_max": 12.0
+    },
+    {
+      "name": "Oxygen Thermal Linear Molar Index",
+      "abbreviation": "K·mol O₂/m",
+      "axis_min": 0.0,
+      "axis_max": 85.0
+    },
+    {
+      "name": "Ammonia Pressure Surface Mass Load",
+      "abbreviation": "Pa·kg NH₃/m²",
+      "axis_min": 0.0,
+      "axis_max": 400.0
+    },
+    {
+      "name": "Methanol Radiant Molar Density",
+      "abbreviation": "J·mol CH₃OH/m³",
+      "axis_min": 0.0,
+      "axis_max": 160.0
+    },
+    {
+      "name": "Nitrate Accelerative Linear Mass Index",
+      "abbreviation": "kg NO₃/(m·s²)",
+      "axis_min": 0.0,
+      "axis_max": 9.81
+    },
+    {
+      "name": "Carbon Dioxide Thermal Time Molar Drift",
+      "abbreviation": "mol CO₂·m/(K·s)",
+      "axis_min": 0.0,
+      "axis_max": 52.0
+    },
+    {
+      "name": "Hydrogen Peroxide Pressure Time Ratio",
+      "abbreviation": "Pa·s H₂O₂/mol",
+      "axis_min": 0.0,
+      "axis_max": 64.0
+    },
+    {
+      "name": "Ethane Thermal Linear Mass Density",
+      "abbreviation": "kg C₂H₆/(m·K)",
+      "axis_min": 0.0,
+      "axis_max": 30.0
+    },
+    {
+      "name": "Ammonium Radiative Surface Flux",
+      "abbreviation": "J NH₄/(m²·s)",
+      "axis_min": 0.0,
+      "axis_max": 110.0
+    },
+    {
+      "name": "Sulfate Thermal Areal Mole Register",
+      "abbreviation": "mol SO₄·m²/K",
+      "axis_min": 0.0,
+      "axis_max": 250.0
+    },
+    {
+      "name": "Methane Pressure Length Time Coefficient",
+      "abbreviation": "Pa·m CH₄/(s·mol)",
+      "axis_min": 0.0,
+      "axis_max": 75.0
+    },
+    {
+      "name": "Oxygen Thermal Time Density Burden",
+      "abbreviation": "kg O₂·K/(m³·s)",
+      "axis_min": 0.0,
+      "axis_max": 44.0
+    },
+    {
+      "name": "Glucose Thermal Time Acceleration Load",
+      "abbreviation": "mol C₆H₁₂O₆·K/s²",
+      "axis_min": 0.0,
+      "axis_max": 800.0
+    }
+  ]
+}
