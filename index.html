@@ -3,1506 +3,252 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Do you know your relationships?</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap">
+  <title>Climate Relationship Quiz</title>
   <style>
-    :root {
-      --bg: #000000;
-      --panel: rgba(8, 4, 18, 0.84);
-      --panel-border: rgba(180, 120, 255, 0.35);
-      --ink: #f4ecff;
-      --accent: #b26cff;
-      --good-bg: rgba(24, 92, 44, 0.85);
-      --good-border: #67d68d;
-      --good-ink: #eafff1;
-      --bad-bg: rgba(120, 25, 40, 0.88);
-      --bad-border: #ff8ca4;
-      --bad-ink: #fff0f4;
-    }
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: 'VT323', 'Courier New', monospace;
-      letter-spacing: 0.04em;
-    }
-    #ascii-bg {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      display: block;
-      background: #000;
-      z-index: 0;
-    }
-    .wrap {
-      position: relative;
-      z-index: 1;
-      max-width: 900px;
-      margin: 20px auto;
-      padding: 16px;
-    }
-    .card {
-      position: relative;
-      background: rgba(8, 4, 18, 0.84);
-      border: 1px solid rgba(180, 120, 255, 0.35);
-      border-radius: 0;
-      box-shadow: 0 0 22px rgba(178, 108, 255, 0.18);
-      padding: 16px 96px 16px 16px;
-      backdrop-filter: blur(2px);
-    }
-    .rewardTank {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      bottom: 16px;
-      width: 64px;
-      pointer-events: none;
-      user-select: none;
-    }
-    .rewardTankLabel {
-      position: absolute;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      font-size: 20px;
-      line-height: 1;
-      color: #f7f3ff;
-      text-shadow: 0 0 8px rgba(178, 108, 255, 0.25);
-    }
-    .rewardTankLabel.top { top: 0; }
-    .rewardTankLabel.bottom { bottom: 0; }
-    .rewardTankGauge {
-      position: absolute;
-      top: 28px;
-      right: 18px;
-      bottom: 28px;
-      width: 20px;
-      border: 1px solid rgba(190, 156, 255, 0.65);
-      background: rgba(14, 8, 26, 0.92);
-      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.45), 0 0 10px rgba(178, 108, 255, 0.16);
-      overflow: hidden;
-    }
-    .rewardTankResidue,
-    .rewardTankFill {
-      position: absolute;
-      left: 0;
-      width: 100%;
-    }
-    .rewardTankResidue {
-      top: 0;
-      bottom: 0;
-      background: rgba(190, 110, 255, 0.75);
-      box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.08);
-    }
-    .rewardTankFill {
-      bottom: 0;
-      height: 100%;
-      background: linear-gradient(to top, rgba(52, 168, 76, 0.92), rgba(111, 242, 128, 0.98));
-      box-shadow: 0 0 10px rgba(111, 242, 128, 0.35);
-    }
-    h1 {
-      margin: 0 0 14px;
-      font-size: 28px;
-      text-align: center;
-      letter-spacing: 0.3px;
-    }
-    .titleBox {
-      display: none;
-      margin-bottom: 10px;
-      font-size: 18px;
-      font-weight: 700;
-      line-height: 1.35;
-      text-align: center;
-    }
-    .graphPanel {
-      overflow-x: auto;
-      margin-bottom: 14px;
-    }
-    svg {
-      display: block;
-      width: 100%;
-      max-width: 780px;
-      margin: 0 auto;
-      min-width: 680px;
-      height: auto;
-      background: #ffffff;
-      border: 1px solid #d8d8e3;
-      border-radius: 0;
-    }
-    .question {
-      margin-top: 10px;
-      margin-bottom: 10px;
-      font-size: 18px;
-      font-weight: 700;
-      line-height: 1.4;
-      text-align: center;
-    }
-    .options {
-      display: grid;
-      gap: 10px;
-      margin-top: 8px;
-    }
-    .options.relationship-mode {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-    .options.direction-mode {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      max-width: 520px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    button {
-      border: 1px solid rgba(190, 156, 255, 0.55);
-      background: rgba(20, 10, 42, 0.9);
-      color: var(--ink);
-      padding: 10px 12px;
-      border-radius: 0;
-      cursor: pointer;
-      font-size: 14px;
-      min-height: 50px;
-      text-align: center;
-      font-family: inherit;
-      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
-      box-shadow: 0 0 0 rgba(0,0,0,0);
-    }
-    button:hover:not(:disabled) {
-      background: rgba(46, 24, 86, 0.95);
-      border-color: var(--accent);
-      box-shadow: 0 0 12px rgba(178, 108, 255, 0.28);
-    }
-    button:active:not(:disabled) { transform: translateY(1px); }
-    button:disabled { cursor: default; opacity: 0.96; }
-    .optionBtn.correct {
-      background: var(--good-bg);
-      border-color: var(--good-border);
-      color: var(--good-ink);
-      font-weight: 700;
-      box-shadow: 0 0 16px rgba(103, 214, 141, 0.35);
-    }
-    .optionBtn.incorrect {
-      background: var(--bad-bg);
-      border-color: var(--bad-border);
-      color: var(--bad-ink);
-      font-weight: 700;
-      box-shadow: 0 0 16px rgba(255, 140, 164, 0.32);
-    }
-    .optionBtn {
-      font-size: 22px;
-    }
-    .optionBtn.correct:hover:not(:disabled),
-    .optionBtn.correct:focus:not(:disabled) {
-      background: var(--good-bg);
-      border-color: var(--good-border);
-      color: var(--good-ink);
-      box-shadow: 0 0 16px rgba(103, 214, 141, 0.35);
-    }
-    .optionBtn.incorrect:hover:not(:disabled),
-    .optionBtn.incorrect:focus:not(:disabled) {
-      background: var(--bad-bg);
-      border-color: var(--bad-border);
-      color: var(--bad-ink);
-      box-shadow: 0 0 16px rgba(255, 140, 164, 0.32);
-    }
-    .statusBar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin: 0 0 14px;
-    }
-    .statusChip {
-      min-width: 140px;
-      padding: 6px 12px;
-      border: 1px solid rgba(190, 156, 255, 0.55);
-      background: rgba(18, 8, 34, 0.94);
-      box-shadow: 0 0 12px rgba(178, 108, 255, 0.18);
-      text-align: center;
-      font-size: 24px;
-      line-height: 1.1;
-    }
-    .statusChip strong {
-      color: #ffd86c;
-      font-weight: 400;
-    }
-    .shopBtn {
-      min-height: 0;
-      padding: 8px 14px;
-      font-size: 24px;
-      text-align: center;
-    }
-    .shopOverlay {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      background: rgba(0, 0, 0, 0.72);
-      z-index: 3;
-    }
-    .shopOverlay.open { display: flex; }
-    .shopWindow {
-      width: min(940px, 100%);
-      max-height: min(86vh, 900px);
-      overflow: auto;
-      padding: 16px;
-      border: 2px solid rgba(190, 156, 255, 0.7);
-      background: rgba(8, 4, 18, 0.97);
-      box-shadow: 0 0 28px rgba(178, 108, 255, 0.3);
-    }
-    .shopHeader {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    .shopTitle { font-size: 36px; line-height: 1; }
-    .shopClose { min-height: 0; font-size: 24px; text-align: center; }
-    .shopInfo { font-size: 24px; margin-bottom: 12px; color: #ffe9a5; }
-    .themeGrid {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .themeCard {
-      display: grid;
-      grid-template-columns: minmax(140px, 1.15fr) minmax(190px, 1.05fr) minmax(170px, 1fr) minmax(130px, 0.9fr) 170px;
-      align-items: center;
-      gap: 10px;
-      border: 1px solid rgba(190, 156, 255, 0.45);
-      background: rgba(20, 10, 42, 0.88);
-      padding: 10px 12px;
-      box-shadow: 0 0 12px rgba(178, 108, 255, 0.14);
-    }
-    .themeCard.equipped {
-      border-color: #67d68d;
-      box-shadow: 0 0 18px rgba(103, 214, 141, 0.22);
-    }
-    .themeName { font-size: 28px; margin-bottom: 0; }
-    .themePrice, .themePreview, .themeStatus { font-size: 20px; margin-bottom: 0; }
-    .themePrice, .themeStatus, .themeAction { white-space: nowrap; }
-    .themePreview { min-height: 0; letter-spacing: 0.02em; }
-    .themeAction { width: 100%; min-height: 0; text-align: center; font-size: 18px; }
-    .orbitonBurst {
-      position: fixed;
-      inset: 0;
-      z-index: 8;
-      pointer-events: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      perspective: 900px;
-      visibility: hidden;
-    }
-    .orbitonBurst.show {
-      visibility: visible;
-    }
-    .orbitonBurstText {
-      font-size: 108px;
-      line-height: 1;
-      transform: scale(0.08) translateZ(-500px);
-      opacity: 0;
-      filter: blur(14px);
-      will-change: transform, opacity, filter;
-      text-shadow: 0 0 18px rgba(0, 0, 0, 0.45);
-    }
-    .orbitonBurst.show .orbitonBurstText {
-      animation: orbitonBurstPop 0.68s cubic-bezier(0.16, 0.84, 0.23, 1) forwards;
-    }
-    .orbitonBurst.gain .orbitonBurstText {
-      color: #8dff9d;
-      text-shadow: 0 0 22px rgba(103, 214, 141, 0.45);
-    }
-    .orbitonBurst.loss .orbitonBurstText {
-      color: #ff9fb7;
-      text-shadow: 0 0 22px rgba(255, 140, 164, 0.42);
-    }
-    @keyframes orbitonBurstPop {
-      0% { opacity: 0; transform: scale(0.08) translateZ(-500px); filter: blur(18px); }
-      16% { opacity: 1; transform: scale(0.45) translateZ(-220px); filter: blur(10px); }
-      45% { opacity: 1; transform: scale(1.25) translateZ(60px); filter: blur(1px); }
-      72% { opacity: 1; transform: scale(1.95) translateZ(180px); filter: blur(0px); }
-      100% { opacity: 0; transform: scale(2.85) translateZ(260px); filter: blur(2px); }
-    }
+    :root { --bg:#f3f7fb; --panel:#fff; --ink:#1f2937; --muted:#6b7280; --line:#cbd5e1; --accent:#1d4ed8; --good:#166534; --bad:#991b1b; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial,Helvetica,sans-serif; background:var(--bg); color:var(--ink); }
+    .wrap { max-width:1100px; margin:24px auto; padding:16px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,.06); padding:18px; }
+    h1 { margin:0 0 10px; font-size:30px; }
+    p.topnote { margin:0 0 18px; color:var(--muted); line-height:1.4; }
+    .controls { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px; }
+    button { border:1px solid #94a3b8; background:#f8fafc; color:var(--ink); padding:10px 14px; border-radius:10px; cursor:pointer; font-size:15px; }
+    button:hover { background:#eef2ff; border-color:var(--accent); }
+    .graphPanel { overflow-x:auto; margin-bottom:18px; }
+    svg { display:block; width:100%; min-width:860px; height:auto; background:#fff; border:1px solid var(--line); border-radius:12px; }
+    .question { margin-top:14px; margin-bottom:10px; font-size:18px; font-weight:700; }
+    .options { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin-top:8px; }
+    .optionBtn { text-align:left; padding:12px 14px; min-height:56px; }
+    .feedback { margin-top:14px; padding:12px 14px; border-radius:10px; display:none; font-weight:700; }
+    .feedback.good { display:block; background:#dcfce7; color:var(--good); border:1px solid #86efac; }
+    .feedback.bad { display:block; background:#fee2e2; color:var(--bad); border:1px solid #fca5a5; }
+    .meta { margin-top:16px; padding-top:12px; border-top:1px solid var(--line); color:var(--muted); font-size:14px; line-height:1.4; }
+    .titleBox { margin-bottom:10px; font-size:19px; font-weight:700; line-height:1.35; }
   </style>
 </head>
 <body>
-  <canvas id="ascii-bg" aria-hidden="true"></canvas>
-
   <div class="wrap">
     <div class="card">
-      <h1>Do you know your relationships?</h1>
-      <div class="statusBar">
-        <div class="statusChip">⟲: <strong id="orbitonCount">0</strong></div>
-        <div class="statusChip">Streak: <strong id="streakCount">0</strong></div>
-        <button class="shopBtn" id="shopButton">Shop</button>
-      </div>
-      <div class="rewardTank" aria-hidden="true">
-        <div class="rewardTankLabel top" id="rewardTankMax">0</div>
-        <div class="rewardTankGauge">
-          <div class="rewardTankResidue" id="rewardTankResidue"></div>
-          <div class="rewardTankFill" id="rewardTankFill"></div>
-        </div>
-        <div class="rewardTankLabel bottom" id="rewardTankMin">0</div>
+      <h1>Relationship Graph Quiz</h1>
+      <p class="topnote">A graph is shown for one invented climate/agricultural variable relationship. Examine the graph, then choose the relationship type shown.</p>
+      <div class="controls">
+        <button id="newQuestionBtn">New Relationship</button>
+        <button id="revealBtn">Reveal Answer</button>
       </div>
       <div class="titleBox" id="chartTitle"></div>
-      <div class="graphPanel">
-        <svg id="chart" viewBox="0 0 780 500" aria-label="relationship graph"></svg>
-      </div>
-      <div class="question" id="questionText"></div>
+      <div class="graphPanel"><svg id="chart" viewBox="0 0 900 620" aria-label="relationship graph"></svg></div>
+      <div class="question">What type of relationship is shown?</div>
       <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="meta">Relationship options shown below the graph: linear, proportional, negative linear, quadratic.</div>
     </div>
-  </div>
-
-  <div class="shopOverlay" id="shopOverlay" aria-hidden="true">
-    <div class="shopWindow">
-      <div class="shopHeader">
-        <div class="shopTitle">Orbiton Exchange Terminal</div>
-        <button class="shopClose" id="shopCloseButton">Close</button>
-      </div>
-      <div class="shopInfo" id="shopInfo"></div>
-      <div class="themeGrid" id="themeGrid"></div>
-    </div>
-  </div>
-
-  <div class="orbitonBurst" id="orbitonBurst" aria-hidden="true">
-    <div class="orbitonBurstText" id="orbitonBurstText"></div>
   </div>
 
   <script>
+    const unitMap = {
+      AYCU:"Atmospheric Yield Coherence Unit", TCSI:"Thermal Crop Synchronization Index", VREM:"Vapor Root Efficiency Measure", SMAU:"Solar Moisture Alignment Unit",
+      AFQ:"Agroclimatic Flux Quotient", BHSU:"Barometric Harvest Stability Unit", PRCI:"Photosynthetic Rainfall Coupling Index", SEHU:"Seasonal Evapotranspiration Harmony Unit",
+      CLRM:"Carbon Loam Responsiveness Measure", RPOU:"Radiative Pasture Optimization Unit", HNTI:"Humidity Nutrient Transfer Index", WPEQ:"Windborne Pollination Efficiency Quotient",
+      TCRU:"Thermal Canopy Retention Unit", SAPM:"Soil Albedo Productivity Measure", PBCI:"Precipitation Biomass Coordination Index", CRPU:"Climatic Root Penetration Unit",
+      GFSQ:"Greenhouse Field Stability Quotient", AVLU:"Agrothermal Vapor Loading Unit", DGCI:"Dewpoint Grain Conversion Index", IFEM:"Insolation Furrow Efficiency Measure",
+      MNDU:"Monsoon Nutrient Diffusion Unit", PHMI:"Pasture Heat Moderation Index", CBLU:"Crop Boundary Layer Utilization Unit", HTRQ:"Hydrologic Tiller Response Quotient",
+      CYBU:"Convective Yield Buffer Unit", CPRI:"Canopy Pressure Regulation Index", SMRM:"Soil Moisture Resonance Measure", LHTU:"Latent Harvest Transfer Unit",
+      FTIQ:"Field Thermal Inertia Quotient", ASI:"Agrobaric Saturation Index", RCCU:"Root Zone Cloud Coupling Unit", DFMM:"Diurnal Fertility Modulation Measure",
+      SMAQ:"Solar Mulch Absorption Quotient", CFPU:"Climate Furrow Persistence Unit", BDRI:"Biomass Dew Retention Index", TGEU:"Transpiration Gradient Efficiency Unit",
+      SLAM:"Seasonal Loam Acceleration Measure", RCCU2:"Rainfed Canopy Compression Unit", MPBQ:"Methane Pasture Balance Quotient", AJUI:"Agronomic Jetstream Utilization Index"
+    };
+
     const variableMap = {
-      "seasonal_atmospheric_yield_coherence":{label:"Seasonal Atmospheric Yield Coherence",unit:"AYCU"},
-      "thermal_crop_sync_phase":{label:"Thermal Crop Sync Phase",unit:"TCSI"},
-      "vapor_root_efficiency_score":{label:"Vapor Root Efficiency Score",unit:"VREM"},
-      "solar_moisture_alignment_factor":{label:"Solar Moisture Alignment Factor",unit:"SMAU"},
-      "agroclimatic_flux_ratio":{label:"Agroclimatic Flux Ratio",unit:"AFQ"},
-      "barometric_harvest_stability":{label:"Barometric Harvest Stability",unit:"BHSU"},
-      "photosynthetic_rainfall_coupling":{label:"Photosynthetic Rainfall Coupling",unit:"PRCI"},
-      "seasonal_evapotranspiration_harmony":{label:"Seasonal Evapotranspiration Harmony",unit:"SEHU"},
-      "carbon_loam_responsiveness":{label:"Carbon Loam Responsiveness",unit:"CLRM"},
-      "radiative_pasture_optimization":{label:"Radiative Pasture Optimization",unit:"RPOU"},
-      "humidity_nutrient_transfer_rate":{label:"Humidity Nutrient Transfer Rate",unit:"HNTI"},
-      "windborne_pollination_efficiency":{label:"Windborne Pollination Efficiency",unit:"WPEQ"},
-      "thermal_canopy_retention":{label:"Thermal Canopy Retention",unit:"TCRU"},
-      "soil_albedo_productivity":{label:"Soil Albedo Productivity",unit:"SAPM"},
-      "precipitation_biomass_coordination":{label:"Precipitation Biomass Coordination",unit:"PBCI"},
-      "climatic_root_penetration_depth":{label:"Climatic Root Penetration Depth",unit:"CRPU"},
-      "greenhouse_field_stability":{label:"Greenhouse Field Stability",unit:"GFSQ"},
-      "agrothermal_vapor_loading":{label:"Agrothermal Vapor Loading",unit:"AVLU"},
-      "dewpoint_grain_conversion":{label:"Dewpoint Grain Conversion",unit:"DGCI"},
-      "insolation_furrow_efficiency":{label:"Insolation Furrow Efficiency",unit:"IFEM"},
-      "monsoon_nutrient_diffusion":{label:"Monsoon Nutrient Diffusion",unit:"MNDU"},
-      "pasture_heat_moderation":{label:"Pasture Heat Moderation",unit:"PHMI"},
-      "crop_boundary_layer_utilization":{label:"Crop Boundary Layer Utilization",unit:"CBLU"},
-      "hydrologic_tiller_response":{label:"Hydrologic Tiller Response",unit:"HTRQ"},
-      "convective_yield_buffer":{label:"Convective Yield Buffer",unit:"CYBU"},
-      "canopy_pressure_regulation":{label:"Canopy Pressure Regulation",unit:"CPRI"},
-      "soil_moisture_resonance":{label:"Soil Moisture Resonance",unit:"SMRM"},
-      "latent_harvest_transfer":{label:"Latent Harvest Transfer",unit:"LHTU"},
-      "field_thermal_inertia":{label:"Field Thermal Inertia",unit:"FTIQ"},
-      "agrobaric_saturation_level":{label:"Agrobaric Saturation Level",unit:"ASI"},
-      "root_zone_cloud_coupling":{label:"Root Zone Cloud Coupling",unit:"RCCU"},
-      "diurnal_fertility_modulation":{label:"Diurnal Fertility Modulation",unit:"DFMM"},
-      "solar_mulch_absorption":{label:"Solar Mulch Absorption",unit:"SMAQ"},
-      "climate_furrow_persistence":{label:"Climate Furrow Persistence",unit:"CFPU"},
-      "biomass_dew_retention":{label:"Biomass Dew Retention",unit:"BDRI"},
-      "transpiration_gradient_efficiency":{label:"Transpiration Gradient Efficiency",unit:"TGEU"},
-      "seasonal_loam_acceleration":{label:"Seasonal Loam Acceleration",unit:"SLAM"},
-      "rainfed_canopy_compression":{label:"Rainfed Canopy Compression",unit:"RCCU2"},
-      "methane_pasture_balance":{label:"Methane Pasture Balance",unit:"MPBQ"},
-      "agronomic_jetstream_utilization":{label:"Agronomic Jetstream Utilization",unit:"AJUI"},
-      "ozone_areal_drift_density":{label:"Ozone Areal Drift Density",unit:"kg O₃/m²"},
-      "ammonia_thermal_volume_loading":{label:"Ammonia Thermal Volume Loading",unit:"mol NH₃·K/m³"},
-      "carbon_dioxide_pressure_area_ratio":{label:"Carbon Dioxide Pressure Area Ratio",unit:"Pa·m² CO₂/mol"},
-      "methane_linear_time_burden":{label:"Methane Linear Time Burden",unit:"kg CH₄·s/m"},
-      "nitrogen_dioxide_radiant_surface_dose":{label:"Nitrogen Dioxide Radiant Surface Dose",unit:"J NO₂/m²"},
-      "hydrogen_sulfide_pressure_temperature_loading":{label:"Hydrogen Sulfide Pressure Temperature Loading",unit:"mol H₂S·Pa/K"},
-      "sulfur_dioxide_thermal_density_gradient":{label:"Sulfur Dioxide Thermal Density Gradient",unit:"kg SO₂/(m³·K)"},
-      "carbon_dioxide_area_time_molar_spread":{label:"Carbon Dioxide Area Time Molar Spread",unit:"m² CO₂/(s·mol)"},
-      "oxygen_thermal_linear_molar_index":{label:"Oxygen Thermal Linear Molar Index",unit:"K·mol O₂/m"},
-      "ammonia_pressure_surface_mass_load":{label:"Ammonia Pressure Surface Mass Load",unit:"Pa·kg NH₃/m²"},
-      "methanol_radiant_molar_density":{label:"Methanol Radiant Molar Density",unit:"J·mol CH₃OH/m³"},
-      "nitrate_accelerative_linear_mass_index":{label:"Nitrate Accelerative Linear Mass Index",unit:"kg NO₃/(m·s²)"},
-      "carbon_dioxide_thermal_time_molar_drift":{label:"Carbon Dioxide Thermal Time Molar Drift",unit:"mol CO₂·m/(K·s)"},
-      "hydrogen_peroxide_pressure_time_ratio":{label:"Hydrogen Peroxide Pressure Time Ratio",unit:"Pa·s H₂O₂/mol"},
-      "ethane_thermal_linear_mass_density":{label:"Ethane Thermal Linear Mass Density",unit:"kg C₂H₆/(m·K)"},
-      "ammonium_radiative_surface_flux":{label:"Ammonium Radiative Surface Flux",unit:"J NH₄/(m²·s)"},
-      "sulfate_thermal_areal_mole_register":{label:"Sulfate Thermal Areal Mole Register",unit:"mol SO₄·m²/K"},
-      "methane_pressure_length_time_coefficient":{label:"Methane Pressure Length Time Coefficient",unit:"Pa·m CH₄/(s·mol)"},
-      "oxygen_thermal_time_density_burden":{label:"Oxygen Thermal Time Density Burden",unit:"kg O₂·K/(m³·s)"},
-      "glucose_thermal_time_acceleration_load":{label:"Glucose Thermal Time Acceleration Load",unit:"mol C₆H₁₂O₆·K/s²"}
+      seasonal_atmospheric_yield_coherence:{label:"Seasonal Atmospheric Yield Coherence",unit:"AYCU"},
+      thermal_crop_sync_phase:{label:"Thermal Crop Sync Phase",unit:"TCSI"},
+      vapor_root_efficiency_score:{label:"Vapor Root Efficiency Score",unit:"VREM"},
+      solar_moisture_alignment_factor:{label:"Solar Moisture Alignment Factor",unit:"SMAU"},
+      agroclimatic_flux_ratio:{label:"Agroclimatic Flux Ratio",unit:"AFQ"},
+      barometric_harvest_stability:{label:"Barometric Harvest Stability",unit:"BHSU"},
+      photosynthetic_rainfall_coupling:{label:"Photosynthetic Rainfall Coupling",unit:"PRCI"},
+      seasonal_evapotranspiration_harmony:{label:"Seasonal Evapotranspiration Harmony",unit:"SEHU"},
+      carbon_loam_responsiveness:{label:"Carbon Loam Responsiveness",unit:"CLRM"},
+      radiative_pasture_optimization:{label:"Radiative Pasture Optimization",unit:"RPOU"},
+      humidity_nutrient_transfer_rate:{label:"Humidity Nutrient Transfer Rate",unit:"HNTI"},
+      windborne_pollination_efficiency:{label:"Windborne Pollination Efficiency",unit:"WPEQ"},
+      thermal_canopy_retention:{label:"Thermal Canopy Retention",unit:"TCRU"},
+      soil_albedo_productivity:{label:"Soil Albedo Productivity",unit:"SAPM"},
+      precipitation_biomass_coordination:{label:"Precipitation Biomass Coordination",unit:"PBCI"},
+      climatic_root_penetration_depth:{label:"Climatic Root Penetration Depth",unit:"CRPU"},
+      greenhouse_field_stability:{label:"Greenhouse Field Stability",unit:"GFSQ"},
+      agrothermal_vapor_loading:{label:"Agrothermal Vapor Loading",unit:"AVLU"},
+      dewpoint_grain_conversion:{label:"Dewpoint Grain Conversion",unit:"DGCI"},
+      insolation_furrow_efficiency:{label:"Insolation Furrow Efficiency",unit:"IFEM"},
+      monsoon_nutrient_diffusion:{label:"Monsoon Nutrient Diffusion",unit:"MNDU"},
+      pasture_heat_moderation:{label:"Pasture Heat Moderation",unit:"PHMI"},
+      crop_boundary_layer_utilization:{label:"Crop Boundary Layer Utilization",unit:"CBLU"},
+      hydrologic_tiller_response:{label:"Hydrologic Tiller Response",unit:"HTRQ"},
+      convective_yield_buffer:{label:"Convective Yield Buffer",unit:"CYBU"},
+      canopy_pressure_regulation:{label:"Canopy Pressure Regulation",unit:"CPRI"},
+      soil_moisture_resonance:{label:"Soil Moisture Resonance",unit:"SMRM"},
+      latent_harvest_transfer:{label:"Latent Harvest Transfer",unit:"LHTU"},
+      field_thermal_inertia:{label:"Field Thermal Inertia",unit:"FTIQ"},
+      agrobaric_saturation_level:{label:"Agrobaric Saturation Level",unit:"ASI"},
+      root_zone_cloud_coupling:{label:"Root Zone Cloud Coupling",unit:"RCCU"},
+      diurnal_fertility_modulation:{label:"Diurnal Fertility Modulation",unit:"DFMM"},
+      solar_mulch_absorption:{label:"Solar Mulch Absorption",unit:"SMAQ"},
+      climate_furrow_persistence:{label:"Climate Furrow Persistence",unit:"CFPU"},
+      biomass_dew_retention:{label:"Biomass Dew Retention",unit:"BDRI"},
+      transpiration_gradient_efficiency:{label:"Transpiration Gradient Efficiency",unit:"TGEU"},
+      seasonal_loam_acceleration:{label:"Seasonal Loam Acceleration",unit:"SLAM"},
+      rainfed_canopy_compression:{label:"Rainfed Canopy Compression",unit:"RCCU2"},
+      methane_pasture_balance:{label:"Methane Pasture Balance",unit:"MPBQ"},
+      agronomic_jetstream_utilization:{label:"Agronomic Jetstream Utilization",unit:"AJUI"}
     };
 
     const relationships = [
-      {x:'seasonal_atmospheric_yield_coherence',y:'thermal_crop_sync_phase',type:'linear (nonproportional)',fn:x => 0.544 * x + 19.4,xRange:[0,100],yRange:[5,85]},
-      {x:'thermal_crop_sync_phase',y:'vapor_root_efficiency_score',type:'proportional',fn:x => 0.110118 * x,xRange:[0,85],yRange:[0,12]},
-      {x:'vapor_root_efficiency_score',y:'solar_moisture_alignment_factor',type:'negative linear relationship',fn:x => -13.033333 * x + 203.2,xRange:[0,12],yRange:[10,240]},
-      {x:'solar_moisture_alignment_factor',y:'seasonal_atmospheric_yield_coherence',type:'nonlinear',fn:x => 12 + 76 * Math.pow((x - 10) / 230, 2),xRange:[10,240],yRange:[0,100]},
-      {x:'agroclimatic_flux_ratio',y:'barometric_harvest_stability',type:'linear (nonproportional)',fn:x => 27.2 * x + -12.8,xRange:[0,1],yRange:[-20,20]},
-      {x:'barometric_harvest_stability',y:'photosynthetic_rainfall_coupling',type:'proportional',fn:x => 11.7 * x,xRange:[0,20],yRange:[0,300]},
-      {x:'photosynthetic_rainfall_coupling',y:'seasonal_evapotranspiration_harmony',type:'negative linear relationship',fn:x => -0.272 * x + 140.8,xRange:[0,300],yRange:[40,160]},
-      {x:'seasonal_evapotranspiration_harmony',y:'agroclimatic_flux_ratio',type:'nonlinear',fn:x => 0.12 + 0.76 * Math.pow((x - 40) / 120, 2),xRange:[40,160],yRange:[0,1]},
-      {x:'carbon_loam_responsiveness',y:'radiative_pasture_optimization',type:'linear (nonproportional)',fn:x => 0.01088 * x + 2.44,xRange:[0,500],yRange:[1,9]},
-      {x:'radiative_pasture_optimization',y:'humidity_nutrient_transfer_rate',type:'proportional',fn:x => 6.5 * x,xRange:[0,9],yRange:[0,75]},
-      {x:'humidity_nutrient_transfer_rate',y:'windborne_pollination_efficiency',type:'negative linear relationship',fn:x => -3.173333 * x + 344,xRange:[0,75],yRange:[50,400]},
-      {x:'windborne_pollination_efficiency',y:'carbon_loam_responsiveness',type:'nonlinear',fn:x => 60 + 380 * Math.pow((x - 50) / 350, 2),xRange:[50,400],yRange:[0,500]},
-      {x:'thermal_canopy_retention',y:'soil_albedo_productivity',type:'linear (nonproportional)',fn:x => 3.4 * x + 62,xRange:[-5,45],yRange:[0,250]},
-      {x:'soil_albedo_productivity',y:'precipitation_biomass_coordination',type:'proportional',fn:x => 0.2964 * x,xRange:[0,250],yRange:[0,95]},
-      {x:'precipitation_biomass_coordination',y:'climatic_root_penetration_depth',type:'negative linear relationship',fn:x => -0.272 * x + 30.64,xRange:[20,95],yRange:[0,30]},
-      {x:'climatic_root_penetration_depth',y:'thermal_canopy_retention',type:'nonlinear',fn:x => 1 + 38 * Math.pow((x - 0) / 30, 2),xRange:[0,30],yRange:[-5,45]},
-      {x:'greenhouse_field_stability',y:'agrothermal_vapor_loading',type:'linear (nonproportional)',fn:x => 0.204 * x + -13.08,xRange:[80,140],yRange:[0,18]},
-      {x:'agrothermal_vapor_loading',y:'dewpoint_grain_conversion',type:'proportional',fn:x => 39 * x,xRange:[0,18],yRange:[0,900]},
-      {x:'dewpoint_grain_conversion',y:'insolation_furrow_efficiency',type:'negative linear relationship',fn:x => -0.051 * x + 55.5,xRange:[100,900],yRange:[0,60]},
-      {x:'insolation_furrow_efficiency',y:'greenhouse_field_stability',type:'nonlinear',fn:x => 87.2 + 45.6 * Math.pow((x - 0) / 60, 2),xRange:[0,60],yRange:[80,140]},
-      {x:'monsoon_nutrient_diffusion',y:'pasture_heat_moderation',type:'linear (nonproportional)',fn:x => 0.17 * x + 24.9,xRange:[0,220],yRange:[15,70]},
-      {x:'pasture_heat_moderation',y:'crop_boundary_layer_utilization',type:'proportional',fn:x => 0.027857 * x,xRange:[0,70],yRange:[0,2.5]},
-      {x:'crop_boundary_layer_utilization',y:'hydrologic_tiller_response',type:'negative linear relationship',fn:x => -217.6 * x + 672,xRange:[0,2.5],yRange:[0,800]},
-      {x:'hydrologic_tiller_response',y:'monsoon_nutrient_diffusion',type:'non-linear proportional',fn:x => 220 * Math.pow(x / 800, 2),xRange:[0,800],yRange:[0,220]},
-      {x:'convective_yield_buffer',y:'canopy_pressure_regulation',type:'linear (nonproportional)',fn:x => 1.133333 * x + 947.333333,xRange:[-10,110],yRange:[900,1100]},
-      {x:'canopy_pressure_regulation',y:'soil_moisture_resonance',type:'proportional',fn:x => 0.009927 * x,xRange:[0,1100],yRange:[0,14]},
-      {x:'soil_moisture_resonance',y:'latent_harvest_transfer',type:'negative linear relationship',fn:x => -2.331429 * x + 40.32,xRange:[0,14],yRange:[0,48]},
-      {x:'latent_harvest_transfer',y:'convective_yield_buffer',type:'non-linear proportional',fn:x => 110 * Math.pow(x / 48, 2),xRange:[0,48],yRange:[0,110]},
-      {x:'field_thermal_inertia',y:'agrobaric_saturation_level',type:'linear (nonproportional)',fn:x => 6.8 * x + 18,xRange:[0,10],yRange:[0,100]},
-      {x:'agrobaric_saturation_level',y:'root_zone_cloud_coupling',type:'proportional',fn:x => 2.808 * x,xRange:[0,100],yRange:[0,360]},
-      {x:'root_zone_cloud_coupling',y:'diurnal_fertility_modulation',type:'negative linear relationship',fn:x => -0.120889 * x + 53.76,xRange:[0,360],yRange:[0,64]},
-      {x:'diurnal_fertility_modulation',y:'field_thermal_inertia',type:'non-linear proportional',fn:x => 10 * Math.pow(x / 64, 2),xRange:[0,64],yRange:[0,10]},
-      {x:'solar_mulch_absorption',y:'climate_furrow_persistence',type:'linear (nonproportional)',fn:x => 22.1 * x + 9.36,xRange:[0,1.6],yRange:[0,52]},
-      {x:'climate_furrow_persistence',y:'biomass_dew_retention',type:'proportional',fn:x => 1.95 * x,xRange:[0,52],yRange:[0,130]},
-      {x:'biomass_dew_retention',y:'transpiration_gradient_efficiency',type:'negative linear relationship',fn:x => -0.041846 * x + 6.72,xRange:[0,130],yRange:[0,8]},
-      {x:'transpiration_gradient_efficiency',y:'solar_mulch_absorption',type:'non-linear proportional',fn:x => 1.6 * Math.pow(x / 8, 2),xRange:[0,8],yRange:[0,1.6]},
-      {x:'seasonal_loam_acceleration',y:'rainfed_canopy_compression',type:'linear (nonproportional)',fn:x => 3.049949 * x + 7.92,xRange:[0,9.81],yRange:[0,44]},
-      {x:'rainfed_canopy_compression',y:'methane_pasture_balance',type:'proportional',fn:x => 0.886364 * x,xRange:[0,44],yRange:[0,50]},
-      {x:'methane_pasture_balance',y:'agronomic_jetstream_utilization',type:'negative linear relationship',fn:x => -4.896 * x + 360,xRange:[-50,50],yRange:[0,720]},
-      {x:'agronomic_jetstream_utilization',y:'seasonal_loam_acceleration',type:'non-linear proportional',fn:x => 9.81 * Math.pow(x / 720, 2),xRange:[0,720],yRange:[0,9.81]},
-      {x:'ozone_areal_drift_density',y:'ammonia_thermal_volume_loading',type:'linear (nonproportional)',fn:x => 8.311111 * x + 39.6,xRange:[0,18],yRange:[0,220]},
-      {x:'ammonia_thermal_volume_loading',y:'carbon_dioxide_pressure_area_ratio',type:'proportional',fn:x => 0.336818 * x,xRange:[0,220],yRange:[0,95]},
-      {x:'carbon_dioxide_pressure_area_ratio',y:'methane_linear_time_burden',type:'negative linear relationship',fn:x => -0.429474 * x + 50.4,xRange:[0,95],yRange:[0,60]},
-      {x:'methane_linear_time_burden',y:'ozone_areal_drift_density',type:'non-linear proportional',fn:x => 18 * Math.pow(x / 60, 2),xRange:[0,60],yRange:[0,18]},
-      {x:'nitrogen_dioxide_radiant_surface_dose',y:'hydrogen_sulfide_pressure_temperature_loading',type:'linear (nonproportional)',fn:x => 0.317333 * x + 25.2,xRange:[0,300],yRange:[0,140]},
-      {x:'hydrogen_sulfide_pressure_temperature_loading',y:'sulfur_dioxide_thermal_density_gradient',type:'proportional',fn:x => 0.267429 * x,xRange:[0,140],yRange:[0,48]},
-      {x:'sulfur_dioxide_thermal_density_gradient',y:'carbon_dioxide_area_time_molar_spread',type:'negative linear relationship',fn:x => -0.136 * x + 8.448,xRange:[-12,48],yRange:[0,12]},
-      {x:'carbon_dioxide_area_time_molar_spread',y:'nitrogen_dioxide_radiant_surface_dose',type:'non-linear proportional',fn:x => 300 * Math.pow(x / 12, 2),xRange:[0,12],yRange:[0,300]},
-      {x:'oxygen_thermal_linear_molar_index',y:'ammonia_pressure_surface_mass_load',type:'linear (nonproportional)',fn:x => 3.2 * x + 72,xRange:[0,85],yRange:[0,400]},
-      {x:'ammonia_pressure_surface_mass_load',y:'methanol_radiant_molar_density',type:'proportional',fn:x => 0.312 * x,xRange:[0,400],yRange:[0,160]},
-      {x:'methanol_radiant_molar_density',y:'nitrate_accelerative_linear_mass_index',type:'negative linear relationship',fn:x => -0.041692 * x + 8.2404,xRange:[0,160],yRange:[0,9.81]},
-      {x:'nitrate_accelerative_linear_mass_index',y:'oxygen_thermal_linear_molar_index',type:'nonlinear',fn:x => 10.2 + 64.6 * Math.pow((x - 0) / 9.81, 2),xRange:[0,9.81],yRange:[0,85]},
-      {x:'carbon_dioxide_thermal_time_molar_drift',y:'hydrogen_peroxide_pressure_time_ratio',type:'linear (nonproportional)',fn:x => 0.836923 * x + 11.52,xRange:[0,52],yRange:[0,64]},
-      {x:'hydrogen_peroxide_pressure_time_ratio',y:'ethane_thermal_linear_mass_density',type:'proportional',fn:x => 0.365625 * x,xRange:[0,64],yRange:[0,30]},
-      {x:'ethane_thermal_linear_mass_density',y:'ammonium_radiative_surface_flux',type:'negative linear relationship',fn:x => -2.493333 * x + 92.4,xRange:[0,30],yRange:[0,110]},
-      {x:'ammonium_radiative_surface_flux',y:'carbon_dioxide_thermal_time_molar_drift',type:'non-linear proportional',fn:x => 52 * Math.pow(x / 110, 2),xRange:[0,110],yRange:[0,52]},
-      {x:'sulfate_thermal_areal_mole_register',y:'methane_pressure_length_time_coefficient',type:'linear (nonproportional)',fn:x => 0.204 * x + 13.5,xRange:[0,250],yRange:[0,75]},
-      {x:'methane_pressure_length_time_coefficient',y:'oxygen_thermal_time_density_burden',type:'proportional',fn:x => 0.4576 * x,xRange:[0,75],yRange:[0,44]},
-      {x:'oxygen_thermal_time_density_burden',y:'glucose_thermal_time_acceleration_load',type:'negative linear relationship',fn:x => -12.363636 * x + 672,xRange:[0,44],yRange:[0,800]},
-      {x:'glucose_thermal_time_acceleration_load',y:'sulfate_thermal_areal_mole_register',type:'non-linear proportional',fn:x => 250 * Math.pow(x / 800, 2),xRange:[0,800],yRange:[0,250]}
+      {x:"thermal_crop_sync_phase",y:"seasonal_atmospheric_yield_coherence",type:"linear",fn:x=>1.8*x+12,xRange:[0,40],yRange:[0,100]},
+      {x:"thermal_crop_sync_phase",y:"thermal_canopy_retention",type:"proportional",fn:x=>0.75*x,xRange:[0,40],yRange:[0,40]},
+      {x:"thermal_canopy_retention",y:"radiative_pasture_optimization",type:"negative linear",fn:x=>-0.6*x+15,xRange:[0,25],yRange:[0,20]},
+      {x:"thermal_crop_sync_phase",y:"field_thermal_inertia",type:"quadratic",fn:x=>0.04*x*x+2,xRange:[0,40],yRange:[0,70]},
+      {x:"solar_moisture_alignment_factor",y:"soil_moisture_resonance",type:"linear",fn:x=>4.5*x+1,xRange:[0,3],yRange:[0,16]},
+      {x:"solar_moisture_alignment_factor",y:"humidity_nutrient_transfer_rate",type:"proportional",fn:x=>3.0*x,xRange:[0,3],yRange:[0,10]},
+      {x:"soil_moisture_resonance",y:"soil_albedo_productivity",type:"negative linear",fn:x=>-8.0*x+120,xRange:[0,15],yRange:[0,130]},
+      {x:"solar_moisture_alignment_factor",y:"biomass_dew_retention",type:"quadratic",fn:x=>2.2*x*x+5,xRange:[0,7],yRange:[0,120]},
+      {x:"agrothermal_vapor_loading",y:"latent_harvest_transfer",type:"linear",fn:x=>2.1*x+4,xRange:[0,20],yRange:[0,50]},
+      {x:"agrothermal_vapor_loading",y:"vapor_root_efficiency_score",type:"proportional",fn:x=>0.5*x,xRange:[0,20],yRange:[0,12]},
+      {x:"vapor_root_efficiency_score",y:"dewpoint_grain_conversion",type:"negative linear",fn:x=>-30*x+850,xRange:[0,12],yRange:[450,900]},
+      {x:"agrothermal_vapor_loading",y:"seasonal_evapotranspiration_harmony",type:"quadratic",fn:x=>0.3*x*x+40,xRange:[0,20],yRange:[0,180]},
+      {x:"photosynthetic_rainfall_coupling",y:"precipitation_biomass_coordination",type:"linear",fn:x=>0.22*x+20,xRange:[0,300],yRange:[0,100]},
+      {x:"photosynthetic_rainfall_coupling",y:"monsoon_nutrient_diffusion",type:"proportional",fn:x=>0.6*x,xRange:[0,300],yRange:[0,220]},
+      {x:"precipitation_biomass_coordination",y:"pasture_heat_moderation",type:"negative linear",fn:x=>-0.5*x+80,xRange:[0,100],yRange:[0,90]},
+      {x:"photosynthetic_rainfall_coupling",y:"carbon_loam_responsiveness",type:"quadratic",fn:x=>0.004*x*x+10,xRange:[0,300],yRange:[0,400]},
+      {x:"windborne_pollination_efficiency",y:"crop_boundary_layer_utilization",type:"linear",fn:x=>0.005*x+0.2,xRange:[0,400],yRange:[0,3]},
+      {x:"windborne_pollination_efficiency",y:"canopy_pressure_regulation",type:"proportional",fn:x=>2.5*x,xRange:[0,40],yRange:[0,110]},
+      {x:"crop_boundary_layer_utilization",y:"rainfed_canopy_compression",type:"negative linear",fn:x=>-12*x+42,xRange:[0,3],yRange:[0,44]},
+      {x:"windborne_pollination_efficiency",y:"climatic_root_penetration_depth",type:"quadratic",fn:x=>0.0001*x*x+3,xRange:[0,400],yRange:[0,30]},
+      {x:"agrobaric_saturation_level",y:"barometric_harvest_stability",type:"linear",fn:x=>0.5*x+5,xRange:[0,100],yRange:[0,60]},
+      {x:"agrobaric_saturation_level",y:"greenhouse_field_stability",type:"proportional",fn:x=>0.12*x,xRange:[0,100],yRange:[0,15]},
+      {x:"greenhouse_field_stability",y:"convective_yield_buffer",type:"negative linear",fn:x=>-0.9*x+140,xRange:[80,140],yRange:[0,80]},
+      {x:"agrobaric_saturation_level",y:"hydrologic_tiller_response",type:"quadratic",fn:x=>0.0006*x*x+20,xRange:[0,100],yRange:[0,40]}
     ];
 
-    const questionModes = ["relationshipType", "directionChange"];
-    const relationshipOptions = ["proportional", "linear (nonproportional)", "negative linear relationship", "nonlinear"];
-    const directionOptions = ["Increases", "Decreases"];
-
+    const answerOptions = ["linear","proportional","negative linear","quadratic"];
     const svg = document.getElementById('chart');
     const chartTitle = document.getElementById('chartTitle');
-    const questionText = document.getElementById('questionText');
     const optionsBox = document.getElementById('options');
-    const orbitonCount = document.getElementById('orbitonCount');
-    const streakCount = document.getElementById('streakCount');
-    const shopButton = document.getElementById('shopButton');
-    const shopOverlay = document.getElementById('shopOverlay');
-    const shopCloseButton = document.getElementById('shopCloseButton');
-    const shopInfo = document.getElementById('shopInfo');
-    const themeGrid = document.getElementById('themeGrid');
-    const rewardTankFill = document.getElementById('rewardTankFill');
-    const orbitonBurst = document.getElementById('orbitonBurst');
-    const orbitonBurstText = document.getElementById('orbitonBurstText');
-    const rewardTankResidue = document.getElementById('rewardTankResidue');
-    const rewardTankMax = document.getElementById('rewardTankMax');
-    const rewardTankMin = document.getElementById('rewardTankMin');
-
+    const feedback = document.getElementById('feedback');
+    const newQuestionBtn = document.getElementById('newQuestionBtn');
+    const revealBtn = document.getElementById('revealBtn');
     let current = null;
-    let currentAxisMode = { flipX: false, flipY: false };
-    let currentQuestionMode = Math.random() < 0.5 ? 'relationshipType' : 'directionChange';
-    let currentCorrectAnswer = null;
-    let answeredCorrectly = false;
     let advanceTimer = null;
-    let orbiton = 0;
-    let correctStreak = 0;
-    let shopUnlocked = true;
-    const shopUnlockOrbiton = 1000;
-    const reducedOptionThreshold = 200000;
-    let reducedRelationshipOptionsUnlocked = false;
-    const orbitonToll = 130;
-    const glyphThemes = {
-      qbasic: { name: 'QBasic Glyphs', price: 0, owned: true, preview: 'Æ Ω Ж ░ ◊ ✶', isEmoji: false, chars: [] },
-      rockets: { name: 'Launch Bay', price: 450000, owned: false, preview: '🚀 🛰️ 🌌 🛸 ✨', isEmoji: true, chars: ['🚀','🛰️','🌌','🛸','✨','🌠','🔭','🪐'] },
-      geology: { name: 'Rock Vault', price: 6000000, owned: false, preview: '🪨 💎 🌋 🧭 ⛰️', isEmoji: true, chars: ['🪨','💎','🌋','⛰️','🧭','🏔️','🧱','🗺️'] },
-      cats: { name: 'Cat Nebula', price: 100000000, owned: false, preview: '😺 😸 😻 🐈 🐈‍⬛', isEmoji: true, chars: ['😺','😸','😹','😻','😼','😽','🙀','😿','😾','🐈','🐈‍⬛'] }
-    };
-    const upgradeItems = {
-      shield: {
-        name: 'Shield Matrix',
-        level: 0,
-        basePrice: 2500,
-        growth: 4,
-        preview: 'Cuts missed-question tolls'
-      },
-      bonus: {
-        name: 'Streak Booster',
-        level: 0,
-        basePrice: 5000,
-        growth: 5,
-        preview: '+0.5 streak multiplier per level'
-      },
-      tankDelay: {
-        name: 'Tank Delay',
-        level: 0,
-        basePrice: 500,
-        growth: 2,
-        preview: 'Adds 0.1 seconds before the tank starts falling'
-      },
-      hedgeFund: {
-        name: 'Hedge Fund',
-        level: 0,
-        basePrice: 12000,
-        growth: 3,
-        preview: 'Slows the tank drop a little each time you buy it'
-      },
-      bottomLine: {
-        name: 'Bottom Line',
-        level: 0,
-        basePrice: 500,
-        growth: 2,
-        preview: 'Raises the minimum points'
-      },
-      regentsMode: {
-        name: 'Regents Mode',
-        level: 0,
-        enabled: false,
-        basePrice: 10000,
-        growth: 1,
-        preview: 'Causes the graphs to behave strangely.'
-      }
-    };
-    let currentGlyphThemeKey = 'qbasic';
-    const neonGlyphPalettes = [
-      { trail: [190, 110, 255], glow: [180, 90, 255], head: [240, 200, 255] },
-      { trail: [60, 230, 200], glow: [40, 255, 210], head: [120, 255, 220] },
-      { trail: [235, 90, 205], glow: [255, 70, 210], head: [255, 120, 230] },
-      { trail: [160, 235, 70], glow: [130, 255, 50], head: [190, 255, 110] },
-      { trail: [245, 170, 60], glow: [255, 145, 20], head: [255, 190, 80] },
-      { trail: [100, 180, 245], glow: [80, 170, 255], head: [130, 200, 255] }
-    ];
-    let activeGlyphColorIndex = 0;
-    const rewardDrainDurationMs = 4200;
-    const baseTankDelayMs = 600;
-    let rewardTankStartedAt = 0;
-    let rewardTankRatio = 1;
-    let rewardTankLocked = false;
-    let currentQuestionMaxReward = 100;
-    let currentQuestionMinReward = 20;
-    let currentQuestionIsStrange = false;
-    let orbitonBurstTimer = null;
 
-    function getGlyphResidueColor(alpha = 0.85) {
-      const palette = neonGlyphPalettes[activeGlyphColorIndex % neonGlyphPalettes.length];
-      return `rgba(${palette.trail[0]}, ${palette.trail[1]}, ${palette.trail[2]}, ${alpha})`;
-    }
-
-    function updateRewardTankVisual() {
-      const pct = Math.max(0, Math.min(1, rewardTankRatio));
-      rewardTankFill.style.height = `${pct * 100}%`;
-      rewardTankResidue.style.background = `linear-gradient(to bottom, ${getGlyphResidueColor(0.92)}, ${getGlyphResidueColor(0.55)})`;
-      rewardTankMax.textContent = currentQuestionMaxReward.toLocaleString();
-      rewardTankMin.textContent = currentQuestionMinReward.toLocaleString();
-    }
-
-    function startRewardTank() {
-      const nextStreak = correctStreak + 1;
-      const baseMaxReward = getOrbitonReward(nextStreak);
-      const baseMinReward = Math.min(baseMaxReward, Math.max(25, Math.round(baseMaxReward * 0.22)) + getBottomLineBonus());
-      const strangeMultiplier = currentQuestionIsStrange ? 20 : 1;
-      currentQuestionMaxReward = baseMaxReward * strangeMultiplier;
-      currentQuestionMinReward = Math.min(currentQuestionMaxReward, baseMinReward * strangeMultiplier);
-      rewardTankStartedAt = performance.now();
-      rewardTankRatio = 1;
-      rewardTankLocked = false;
-      updateRewardTankVisual();
-    }
-
-    function getRewardTankRatio(now = performance.now()) {
-      if (!rewardTankStartedAt) return 1;
-      if (rewardTankLocked) return rewardTankRatio;
-      const elapsed = now - rewardTankStartedAt;
-      const delay = getTankDelayMs();
-      if (elapsed <= delay) return 1;
-      const fallingElapsed = elapsed - delay;
-      return Math.max(0, 1 - (fallingElapsed / getEffectiveTankDrainDurationMs()));
-    }
-
-    function tickRewardTank(now = performance.now()) {
-      if (!rewardTankStartedAt) return;
-      if (!rewardTankLocked) {
-        rewardTankRatio = getRewardTankRatio(now);
-        updateRewardTankVisual();
-      }
-    }
-
-    function lockRewardTank() {
-      rewardTankRatio = getRewardTankRatio();
-      rewardTankLocked = true;
-      updateRewardTankVisual();
-    }
-
-    function getTankOrbitonReward() {
-      const pct = Math.max(0, Math.min(1, rewardTankRatio));
-      return Math.round(currentQuestionMinReward + ((currentQuestionMaxReward - currentQuestionMinReward) * pct));
-    }
-
-    function pickRandomRelationship(previous = null) {
+    function pickRandomRelationship(previous=null) {
       clearTimeout(advanceTimer);
-      answeredCorrectly = false;
-
       let next;
       if (relationships.length === 1) {
         next = relationships[0];
       } else {
-        do {
-          next = relationships[Math.floor(Math.random() * relationships.length)];
-        } while (previous && next === previous);
+        do { next = relationships[Math.floor(Math.random()*relationships.length)]; }
+        while (previous && next === previous);
       }
-
       current = next;
-      currentQuestionIsStrange = upgradeItems.regentsMode.level > 0 && upgradeItems.regentsMode.enabled && Math.random() < 0.5;
-      currentAxisMode = {
-        flipX: currentQuestionIsStrange,
-        flipY: Math.random() < 0.5
-      };
-      currentQuestionMode = questionModes[Math.floor(Math.random() * questionModes.length)];
-      currentCorrectAnswer = getCorrectAnswer();
-      startRewardTank();
-
-      renderTitle();
-      renderChart();
-      renderQuestion();
-      renderOptions();
-    }
-
-    function getDirectionAnswer() {
-      return current.type === 'negative linear relationship' ? 'Decreases' : 'Increases';
-    }
-
-    function getCorrectAnswer() {
-      if (currentQuestionMode === 'directionChange') return getDirectionAnswer();
-      if (current.type === 'non-linear proportional') return 'proportional';
-      return current.type;
-    }
-
-    function updateProgressUnlocks() {
-      if (orbiton >= reducedOptionThreshold) {
-        reducedRelationshipOptionsUnlocked = true;
-      }
-    }
-
-    function shuffleArray(items) {
-      const arr = items.slice();
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    function advanceGlyphPalette() {
-      activeGlyphColorIndex = (activeGlyphColorIndex + 1) % neonGlyphPalettes.length;
-    }
-
-    function rgbaColor(rgb, alpha) {
-      return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
-    }
-
-    function currentGlyphTheme() {
-      return glyphThemes[currentGlyphThemeKey];
-    }
-
-    function currentBackgroundFont() {
-      if (currentGlyphTheme().isEmoji) {
-        return `${Math.floor(cell * 0.84)}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
-      }
-      return `${Math.floor(cell * 0.96)}px "VT323", "Courier New", monospace`;
-    }
-
-    function clearGlyphSpriteCache() {
-      glyphSpriteCache.clear();
-    }
-
-    function getGlyphSprite(char, role, colorIndex) {
-      const theme = currentGlyphTheme();
-      const key = `${currentGlyphThemeKey}|${cell}|${role}|${colorIndex}|${char}`;
-      if (glyphSpriteCache.has(key)) return glyphSpriteCache.get(key);
-
-      const size = Math.ceil(cell * 2.4);
-      const sprite = document.createElement('canvas');
-      sprite.width = size;
-      sprite.height = size;
-      const ctx = sprite.getContext('2d');
-      const palette = neonGlyphPalettes[colorIndex % neonGlyphPalettes.length];
-
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.font = currentBackgroundFont();
-
-      if (!theme.isEmoji) {
-        ctx.shadowBlur = role === 'head' ? 16 : 12;
-        ctx.shadowColor = rgbaColor(palette.glow, role === 'head' ? 0.9 : 0.55);
-        ctx.fillStyle = rgbaColor(role === 'head' ? palette.head : palette.trail, 1);
-      } else {
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#ffffff';
-      }
-
-      ctx.fillText(char, size / 2, size / 2);
-      glyphSpriteCache.set(key, sprite);
-      return sprite;
-    }
-
-    function getUpgradePrice(key) {
-      const item = upgradeItems[key];
-      return Math.round(item.basePrice * Math.pow(item.growth, item.level));
-    }
-
-    function getShieldReduction() {
-      return Math.min(0.95, upgradeItems.shield.level * 0.25);
-    }
-
-    function getEffectiveToll() {
-      return Math.max(0, Math.round(orbitonToll * (1 - getShieldReduction())));
-    }
-
-    function getStreakStep() {
-      return 0.4 + (upgradeItems.bonus.level * 0.5);
-    }
-
-    function getTankDelayMs() {
-      return baseTankDelayMs + (upgradeItems.tankDelay.level * 100);
-    }
-
-    function getEffectiveTankDrainDurationMs() {
-      return Math.round(rewardDrainDurationMs * (1 + (upgradeItems.hedgeFund.level * 0.08)));
-    }
-
-    function getBottomLineBonus() {
-      return upgradeItems.bottomLine.level * 10;
-    }
-
-    function showOrbitonBurst(amount, kind) {
-      clearTimeout(orbitonBurstTimer);
-      orbitonBurst.classList.remove('show', 'gain', 'loss');
-      void orbitonBurst.offsetWidth;
-      orbitonBurstText.textContent = `${amount > 0 ? '+' : '-'}${Math.abs(amount).toLocaleString()} ⟲`;
-      orbitonBurst.classList.add(kind === 'gain' ? 'gain' : 'loss', 'show');
-      orbitonBurstTimer = setTimeout(() => {
-        orbitonBurst.classList.remove('show', 'gain', 'loss');
-      }, 580);
-    }
-
-    function toggleRegentsMode() {
-      if (upgradeItems.regentsMode.level <= 0) return;
-      upgradeItems.regentsMode.enabled = !upgradeItems.regentsMode.enabled;
-      updateOrbitonHud();
-      renderShop();
-    }
-
-    function getOrbitonReward(streak) {
-      return Math.round(100 * (1 + Math.max(0, streak - 1) * getStreakStep()));
-    }
-
-    function buyUpgrade(key) {
-      const item = upgradeItems[key];
-      if (key === 'regentsMode' && item.level > 0) return;
-      const price = getUpgradePrice(key);
-      if (orbiton < price) return;
-      orbiton -= price;
-      item.level += 1;
-      if (key === 'regentsMode') item.enabled = true;
-      updateProgressUnlocks();
-      updateOrbitonHud();
-      renderShop();
-    }
-
-    function setOrbitonNotice(message) {
-      return message;
-    }
-
-    function updateOrbitonHud() {
-      orbitonCount.textContent = orbiton.toLocaleString();
-      streakCount.textContent = correctStreak;
-      shopInfo.textContent = `Orbiton Balance: ${orbiton.toLocaleString()} ⟲ | Delay: ${(getTankDelayMs() / 1000).toFixed(1)}s | Hedge: +${Math.round((getEffectiveTankDrainDurationMs() / rewardDrainDurationMs - 1) * 100)}% | Bottom: +${getBottomLineBonus()} | Regents: ${upgradeItems.regentsMode.level > 0 ? (upgradeItems.regentsMode.enabled ? 'ON' : 'OFF') : 'locked'} | 3-choice: ${reducedRelationshipOptionsUnlocked ? 'ON' : 'OFF'}`;
-    }
-
-    function openShop() {
-      renderShop();
-      shopOverlay.classList.add('open');
-      shopOverlay.setAttribute('aria-hidden', 'false');
-    }
-
-    function closeShop() {
-      shopOverlay.classList.remove('open');
-      shopOverlay.setAttribute('aria-hidden', 'true');
-    }
-
-    function equipTheme(themeKey) {
-      currentGlyphThemeKey = themeKey;
-      clearGlyphSpriteCache();
-      initStreams();
-      renderShop();
-      setOrbitonNotice(`${glyphThemes[themeKey].name} equipped.`);
-    }
-
-    function buyTheme(themeKey) {
-      const theme = glyphThemes[themeKey];
-      if (theme.owned || orbiton < theme.price) return;
-      orbiton -= theme.price;
-      theme.owned = true;
-      updateProgressUnlocks();
-      updateOrbitonHud();
-      equipTheme(themeKey);
-      setOrbitonNotice(`Purchased ${theme.name} for ${theme.price.toLocaleString()} ⟲.`);
-    }
-
-    function renderShop() {
-      updateOrbitonHud();
-      themeGrid.innerHTML = '';
-
-      Object.entries(glyphThemes).forEach(([themeKey, theme]) => {
-        const card = document.createElement('div');
-        card.className = 'themeCard' + (currentGlyphThemeKey === themeKey ? ' equipped' : '');
-
-        const name = document.createElement('div');
-        name.className = 'themeName';
-        name.textContent = theme.name;
-        card.appendChild(name);
-
-        const price = document.createElement('div');
-        price.className = 'themePrice';
-        price.textContent = theme.price === 0 ? 'Price: included' : `Price: ${theme.price.toLocaleString()} ⟲`;
-        card.appendChild(price);
-
-        const preview = document.createElement('div');
-        preview.className = 'themePreview';
-        preview.textContent = theme.preview;
-        card.appendChild(preview);
-
-        const status = document.createElement('div');
-        status.className = 'themeStatus';
-        status.textContent = currentGlyphThemeKey === themeKey ? 'Status: equipped' : (theme.owned ? 'Status: owned' : 'Status: locked');
-        card.appendChild(status);
-
-        const action = document.createElement('button');
-        action.className = 'themeAction';
-        if (!theme.owned) {
-          action.textContent = `Buy (${theme.price.toLocaleString()} ⟲)`;
-          action.disabled = orbiton < theme.price;
-          action.addEventListener('click', () => buyTheme(themeKey));
-        } else if (currentGlyphThemeKey === themeKey) {
-          action.textContent = 'Equipped';
-          action.disabled = true;
-        } else {
-          action.textContent = 'Equip';
-          action.addEventListener('click', () => equipTheme(themeKey));
-        }
-        card.appendChild(action);
-        themeGrid.appendChild(card);
-      });
-
-      Object.entries(upgradeItems).forEach(([key, item]) => {
-        const priceValue = getUpgradePrice(key);
-        const card = document.createElement('div');
-        card.className = 'themeCard';
-
-        const name = document.createElement('div');
-        name.className = 'themeName';
-        name.textContent = item.name;
-        card.appendChild(name);
-
-        const price = document.createElement('div');
-        price.className = 'themePrice';
-        price.textContent = `Next: ${priceValue.toLocaleString()} ⟲`;
-        card.appendChild(price);
-
-        const preview = document.createElement('div');
-        preview.className = 'themePreview';
-        preview.textContent = key === 'shield'
-          ? `${item.preview} | Current block: ${Math.round(getShieldReduction() * 100)}%`
-          : key === 'bonus'
-            ? `${item.preview} | Current step: +${getStreakStep().toFixed(1)}`
-            : key === 'tankDelay'
-              ? `${item.preview} | Current delay: ${(getTankDelayMs() / 1000).toFixed(1)}s`
-              : key === 'hedgeFund'
-                ? `${item.preview} | Current slowdown: +${Math.round((getEffectiveTankDrainDurationMs() / rewardDrainDurationMs - 1) * 100)}%`
-                : key === 'bottomLine'
-                  ? `${item.preview} | Current minimum boost: +${getBottomLineBonus()}`
-                  : `${item.preview} | Strange questions pay x20 when active`;
-        card.appendChild(preview);
-
-        const status = document.createElement('div');
-        status.className = 'themeStatus';
-        status.textContent = key === 'regentsMode' ? `Status: ${item.level > 0 ? (item.enabled ? 'ON' : 'OFF') : 'available'}` : `Level: ${item.level}`;
-        card.appendChild(status);
-
-        const action = document.createElement('button');
-        action.className = 'themeAction';
-        if (key === 'regentsMode') {
-          action.textContent = item.level > 0 ? (item.enabled ? 'Turn Off' : 'Turn On') : `Buy (${priceValue.toLocaleString()} ⟲)`;
-          action.disabled = item.level === 0 ? orbiton < priceValue : false;
-          action.addEventListener('click', () => {
-            if (item.level > 0) {
-              toggleRegentsMode();
-            } else {
-              buyUpgrade(key);
-            }
-          });
-        } else {
-          action.textContent = `Upgrade (${priceValue.toLocaleString()} ⟲)`;
-          action.disabled = orbiton < priceValue;
-          action.addEventListener('click', () => buyUpgrade(key));
-        }
-        card.appendChild(action);
-        themeGrid.appendChild(card);
-      });
-
-      const unlockCard = document.createElement('div');
-      unlockCard.className = 'themeCard';
-
-      const unlockName = document.createElement('div');
-      unlockName.className = 'themeName';
-      unlockName.textContent = 'THREE-OPTION Unlock';
-      unlockCard.appendChild(unlockName);
-
-      const unlockPrice = document.createElement('div');
-      unlockPrice.className = 'themePrice';
-      unlockPrice.textContent = `Auto at ${reducedOptionThreshold.toLocaleString()} ⟲`;
-      unlockCard.appendChild(unlockPrice);
-
-      const unlockPreview = document.createElement('div');
-      unlockPreview.className = 'themePreview';
-      unlockPreview.textContent = 'Relationship questions drop from 4 choices to 3';
-      unlockCard.appendChild(unlockPreview);
-
-      const unlockStatus = document.createElement('div');
-      unlockStatus.className = 'themeStatus';
-      unlockStatus.textContent = `Status: ${reducedRelationshipOptionsUnlocked ? 'unlocked' : 'locked'}`;
-      unlockCard.appendChild(unlockStatus);
-
-      const unlockAction = document.createElement('button');
-      unlockAction.className = 'themeAction';
-      unlockAction.textContent = reducedRelationshipOptionsUnlocked ? 'Unlocked' : `Need ${reducedOptionThreshold.toLocaleString()} ⟲`;
-      unlockAction.disabled = true;
-      unlockCard.appendChild(unlockAction);
-      themeGrid.appendChild(unlockCard);
+      feedback.className = 'feedback';
+      feedback.textContent = '';
+      renderTitle(); renderChart(); renderOptions();
     }
 
     function renderTitle() {
-      chartTitle.textContent = '';
-    }
-
-    function renderQuestion() {
-      const xMeta = variableMap[current.x];
-      const yMeta = variableMap[current.y];
-      if (currentQuestionMode === 'directionChange') {
-        questionText.textContent = `As ${xMeta.label} increases, the ${yMeta.label}...`;
-      } else {
-        questionText.textContent = 'What type of relationship is shown?';
-      }
-    }
-
-    function getOptionsForCurrentQuestion() {
-      if (currentQuestionMode === 'directionChange') return directionOptions;
-      if (!reducedRelationshipOptionsUnlocked) return relationshipOptions;
-
-      const correct = getCorrectAnswer();
-      const distractors = shuffleArray(relationshipOptions.filter(opt => opt !== correct)).slice(0, 2);
-      return shuffleArray([correct, ...distractors]);
+      const xMeta = variableMap[current.x], yMeta = variableMap[current.y];
+      const xUnitFull = unitMap[xMeta.unit], yUnitFull = unitMap[yMeta.unit];
+      chartTitle.textContent = `${yMeta.label} (${yUnitFull}, ${yMeta.unit}) vs. ${xMeta.label} (${xUnitFull}, ${xMeta.unit})`;
     }
 
     function renderOptions() {
       optionsBox.innerHTML = '';
-      optionsBox.className = 'options ' + (currentQuestionMode === 'directionChange' ? 'direction-mode' : 'relationship-mode');
-      getOptionsForCurrentQuestion().forEach(opt => {
+      answerOptions.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'optionBtn';
         btn.textContent = opt;
-        btn.dataset.value = opt;
-        btn.addEventListener('click', () => handleOptionClick(btn, opt));
+        btn.addEventListener('click', () => checkAnswer(opt));
         optionsBox.appendChild(btn);
       });
     }
 
-    function clearButtonStates() {
-      document.querySelectorAll('.optionBtn').forEach(btn => {
-        btn.classList.remove('correct', 'incorrect');
-      });
-    }
-
     function setOptionsDisabled(disabled) {
-      document.querySelectorAll('.optionBtn').forEach(btn => {
-        btn.disabled = disabled;
-      });
+      document.querySelectorAll('.optionBtn').forEach(btn => btn.disabled = disabled);
     }
 
-    function handleOptionClick(btn, choice) {
-      if (answeredCorrectly) return;
+    function checkAnswer(choice) {
       clearTimeout(advanceTimer);
-
-      if (choice === currentCorrectAnswer) {
-        lockRewardTank();
-        answeredCorrectly = true;
-        correctStreak += 1;
-        const reward = getTankOrbitonReward();
-        orbiton += reward;
-        advanceGlyphPalette();
-        clearButtonStates();
-        btn.blur();
-        btn.classList.add('correct');
+      if (choice === current.type) {
+        feedback.className = 'feedback good';
+        feedback.textContent = `Correct: this graph shows a ${current.type} relationship. Loading another relationship...`;
         setOptionsDisabled(true);
-        updateProgressUnlocks();
-        updateOrbitonHud();
-        showOrbitonBurst(reward, 'gain');
-        setOrbitonNotice(`+${reward} ⟲. Streak ${correctStreak}.`);
-        renderShop();
         const previous = current;
         advanceTimer = setTimeout(() => pickRandomRelationship(previous), 900);
       } else {
-        lockRewardTank();
-        correctStreak = 0;
-        const tollLoss = getEffectiveToll();
-        orbiton = Math.max(0, orbiton - tollLoss);
-        clearButtonStates();
-        btn.blur();
-        btn.classList.add('incorrect');
-        updateProgressUnlocks();
-        updateOrbitonHud();
-        showOrbitonBurst(-tollLoss, 'loss');
-        setOrbitonNotice(`Toll paid: -${tollLoss} ⟲.`);
-        renderShop();
+        feedback.className = 'feedback bad';
+        feedback.textContent = `Not correct. You chose ${choice}. Try again.`;
       }
     }
 
-    function makeSVG(tag, attrs = {}, text = '') {
+    function revealAnswer() {
+      clearTimeout(advanceTimer);
+      feedback.className = 'feedback good';
+      feedback.textContent = `Answer: ${current.type}`;
+    }
+
+    function makeSVG(tag, attrs={}, text='') {
       const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-      for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+      for (const [k,v] of Object.entries(attrs)) el.setAttribute(k,v);
       if (text) el.textContent = text;
       return el;
     }
 
-    function measureSvgTextWidth(svg, text, fontSize, fontWeight = '700') {
-      const temp = makeSVG('text', {
-        x: -9999,
-        y: -9999,
-        'text-anchor': 'start',
-        'font-size': fontSize,
-        'font-weight': fontWeight,
-        fill: '#111827',
-        visibility: 'hidden'
-      }, text);
-      svg.appendChild(temp);
-      const width = temp.getBBox().width;
-      svg.removeChild(temp);
-      return width;
-    }
-
-    function wrapWordsForSvg(svg, text, maxWidth, fontSize) {
-      const words = text.split(/\s+/);
-      const lines = [];
-      let current = '';
-
-      for (const word of words) {
-        const candidate = current ? `${current} ${word}` : word;
-        const candidateWidth = measureSvgTextWidth(svg, candidate, fontSize);
-        if (!current || candidateWidth <= maxWidth) {
-          current = candidate;
-        } else {
-          lines.push(current);
-          current = word;
-        }
-      }
-
-      if (current) lines.push(current);
-      return lines;
-    }
-
-    function addSmartXAxisLabel(svg, label, unit, x, y, W, maxWidth, preferTop) {
-      const textEl = makeSVG('text', {
-        x,
-        y,
-        'text-anchor': 'middle',
-        'font-size': 18,
-        'font-weight': '700',
-        fill: '#111827'
-      }, `${label} (${unit})`);
-
-      svg.appendChild(textEl);
-      const bbox = textEl.getBBox();
-      const overflow = bbox.x < 4 || (bbox.x + bbox.width) > (W - 4) || bbox.width > maxWidth;
-
-      if (overflow) {
-        textEl.textContent = '';
-        textEl.setAttribute('font-size', '16');
-        const line1Y = preferTop ? y : y - 8;
-        const line2Y = preferTop ? y + 16 : y + 10;
-        const t1 = makeSVG('tspan', { x, y: line1Y }, label);
-        const t2 = makeSVG('tspan', { x, y: line2Y, 'font-size': 15 }, `(${unit})`);
-        textEl.appendChild(t1);
-        textEl.appendChild(t2);
-      }
-    }
-
-    function addSmartGraphTitle(svg, title, x, y, maxWidth) {
-      const wrapped = wrapWordsForSvg(svg, title, maxWidth, 16).slice(0, 3);
-      const multiLine = wrapped.length > 1;
-      const fontSize = multiLine ? 15 : 16;
-      const lineGap = multiLine ? 22 : 18;
-      const startY = y - ((wrapped.length - 1) * lineGap) / 2;
-
-      wrapped.forEach((line, idx) => {
-        svg.appendChild(makeSVG('text', {
-          x,
-          y: startY + idx * lineGap,
-          'text-anchor': 'middle',
-          'font-size': fontSize,
-          'font-weight': '700',
-          fill: '#111827'
-        }, line));
-      });
-    }
-
-    function addSmartYAxisLabel(svg, label, unit, x, y, maxWidth) {
-      const labelLines = wrapWordsForSvg(svg, label, maxWidth, 15);
-      const lines = [...labelLines, `(${unit})`];
-      const lineGap = 18;
-      const startY = y - ((lines.length - 1) * lineGap) / 2;
-      lines.forEach((line, idx) => {
-        const textEl = makeSVG('text', {
-          x,
-          y: startY + idx * lineGap,
-          'text-anchor': 'middle',
-          'font-size': 18,
-          'font-weight': '700',
-          fill: '#111827'
-        }, line);
-        svg.appendChild(textEl);
-      });
-    }
-
-    function addSmartYAxisLabelVertical(svg, label, unit, x, y, svgHeight, padding = 8) {
-      const heightLimit = Math.max(80, svgHeight - (padding * 2));
-      const minWidth = 64;
-      const step = 12;
-      const lineGap = 18;
-      function buildGroup(maxWidth) {
-        const labelLines = wrapWordsForSvg(svg, label, maxWidth, 15);
-        const lines = [...labelLines, `(${unit})`];
-        const startY = y - ((lines.length - 1) * lineGap) / 2;
-        const group = makeSVG('g', { transform: `rotate(-90 ${x} ${y})` });
-        lines.forEach((line, idx) => {
-          const textEl = makeSVG('text', {
-            x,
-            y: startY + idx * lineGap,
-            'text-anchor': 'middle',
-            'font-size': 18,
-            'font-weight': '700',
-            fill: '#111827'
-          }, line);
-          group.appendChild(textEl);
-        });
-        return group;
-      }
-      let chosenGroup = null;
-      let maxWidth = heightLimit;
-      while (maxWidth >= minWidth) {
-        const testGroup = buildGroup(maxWidth);
-        svg.appendChild(testGroup);
-        const bbox = testGroup.getBBox();
-        if (bbox.height <= heightLimit && bbox.y >= padding && (bbox.y + bbox.height) <= (svgHeight - padding)) {
-          chosenGroup = testGroup;
-          break;
-        }
-        svg.removeChild(testGroup);
-        maxWidth -= step;
-      }
-      if (!chosenGroup) {
-        chosenGroup = buildGroup(minWidth);
-        svg.appendChild(chosenGroup);
-      }
-    }
-
     function renderChart() {
       svg.innerHTML = '';
+      const W=900,H=620,m={top:50,right:40,bottom:120,left:130};
+      const plotW=W-m.left-m.right, plotH=H-m.top-m.bottom;
+      const [xmin,xmax]=current.xRange, [ymin,ymax]=current.yRange;
+      const xMeta=variableMap[current.x], yMeta=variableMap[current.y];
+      const xUnitFull=unitMap[xMeta.unit], yUnitFull=unitMap[yMeta.unit];
+      const xScale=x=>m.left+((x-xmin)/(xmax-xmin))*plotW;
+      const yScale=y=>m.top+plotH-((y-ymin)/(ymax-ymin))*plotH;
 
-      const W = 780;
-      const H = 500;
-      const m = {
-        top: currentAxisMode.flipY ? 112 : 68,
-        right: 36,
-        bottom: currentAxisMode.flipY ? 44 : 68,
-        left: 150
-      };
-      const plotW = W - m.left - m.right;
-      const plotH = H - m.top - m.bottom;
-      const [xmin, xmax] = current.xRange;
-      const [ymin, ymax] = current.yRange;
-      const xMeta = variableMap[current.x];
-      const yMeta = variableMap[current.y];
-
-      const xScaleStandard = x => m.left + ((x - xmin) / (xmax - xmin)) * plotW;
-      const xScaleFlipped = x => m.left + plotW - ((x - xmin) / (xmax - xmin)) * plotW;
-      const xScale = currentAxisMode.flipX ? xScaleFlipped : xScaleStandard;
-      const yScaleStandard = y => m.top + plotH - ((y - ymin) / (ymax - ymin)) * plotH;
-      const yScaleFlipped = y => m.top + ((y - ymin) / (ymax - ymin)) * plotH;
-      const yScale = currentAxisMode.flipY ? yScaleFlipped : yScaleStandard;
-
-      const xAxisY = currentAxisMode.flipY ? m.top : m.top + plotH;
-      const xTickLabelY = currentAxisMode.flipY ? m.top - 10 : m.top + plotH + 24;
-      const xTickY2 = currentAxisMode.flipY ? m.top - 7 : m.top + plotH + 7;
-
-      svg.appendChild(makeSVG('rect', { x: 0, y: 0, width: W, height: H, fill: '#fff' }));
-      addSmartGraphTitle(svg, `${yMeta.label} (${yMeta.unit}) vs. ${xMeta.label} (${xMeta.unit})`, W / 2, 28, W - 40);
-
-      for (let i = 0; i <= 10; i++) {
-        const xVal = xmin + (i / 10) * (xmax - xmin);
-        const xPix = xScale(xVal);
-        svg.appendChild(makeSVG('line', { x1: xPix, y1: m.top, x2: xPix, y2: m.top + plotH, stroke: '#ececf2', 'stroke-width': 1 }));
+      svg.appendChild(makeSVG('rect',{x:0,y:0,width:W,height:H,fill:'#fff'}));
+      for(let i=0;i<=10;i++){
+        const xVal=xmin+(i/10)*(xmax-xmin), xPix=xScale(xVal);
+        svg.appendChild(makeSVG('line',{x1:xPix,y1:m.top,x2:xPix,y2:m.top+plotH,stroke:'#e5e7eb','stroke-width':1}));
       }
-
-      for (let i = 0; i <= 10; i++) {
-        const yVal = ymin + (i / 10) * (ymax - ymin);
-        const yPix = yScale(yVal);
-        svg.appendChild(makeSVG('line', { x1: m.left, y1: yPix, x2: m.left + plotW, y2: yPix, stroke: '#ececf2', 'stroke-width': 1 }));
+      for(let i=0;i<=10;i++){
+        const yVal=ymin+(i/10)*(ymax-ymin), yPix=yScale(yVal);
+        svg.appendChild(makeSVG('line',{x1:m.left,y1:yPix,x2:m.left+plotW,y2:yPix,stroke:'#e5e7eb','stroke-width':1}));
       }
-
-      svg.appendChild(makeSVG('line', { x1: m.left, y1: xAxisY, x2: m.left + plotW, y2: xAxisY, stroke: '#111827', 'stroke-width': 2.2 }));
-      svg.appendChild(makeSVG('line', { x1: m.left, y1: m.top, x2: m.left, y2: m.top + plotH, stroke: '#111827', 'stroke-width': 2.2 }));
-
-      for (let i = 0; i <= 10; i++) {
-        const xVal = xmin + (i / 10) * (xmax - xmin);
-        const xPix = xScale(xVal);
-        svg.appendChild(makeSVG('line', { x1: xPix, y1: xAxisY, x2: xPix, y2: xTickY2, stroke: '#111827', 'stroke-width': 1.8 }));
-        svg.appendChild(makeSVG('text', { x: xPix, y: xTickLabelY, 'text-anchor': 'middle', 'font-size': 13, fill: '#111827' }, tidyNumber(xVal)));
+      svg.appendChild(makeSVG('line',{x1:m.left,y1:m.top+plotH,x2:m.left+plotW,y2:m.top+plotH,stroke:'#111827','stroke-width':2.5}));
+      svg.appendChild(makeSVG('line',{x1:m.left,y1:m.top,x2:m.left,y2:m.top+plotH,stroke:'#111827','stroke-width':2.5}));
+      for(let i=0;i<=10;i++){
+        const xVal=xmin+(i/10)*(xmax-xmin), xPix=xScale(xVal);
+        svg.appendChild(makeSVG('line',{x1:xPix,y1:m.top+plotH,x2:xPix,y2:m.top+plotH+8,stroke:'#111827','stroke-width':2}));
+        svg.appendChild(makeSVG('text',{x:xPix,y:m.top+plotH+26,'text-anchor':'middle','font-size':14,fill:'#111827'},tidyNumber(xVal)));
       }
-
-      for (let i = 0; i <= 10; i++) {
-        const yVal = ymin + (i / 10) * (ymax - ymin);
-        const yPix = yScale(yVal);
-        svg.appendChild(makeSVG('line', { x1: m.left - 7, y1: yPix, x2: m.left, y2: yPix, stroke: '#111827', 'stroke-width': 1.8 }));
-        svg.appendChild(makeSVG('text', { x: m.left - 12, y: yPix + 4, 'text-anchor': 'end', 'font-size': 13, fill: '#111827' }, tidyNumber(yVal)));
+      for(let i=0;i<=10;i++){
+        const yVal=ymin+(i/10)*(ymax-ymin), yPix=yScale(yVal);
+        svg.appendChild(makeSVG('line',{x1:m.left-8,y1:yPix,x2:m.left,y2:yPix,stroke:'#111827','stroke-width':2}));
+        svg.appendChild(makeSVG('text',{x:m.left-14,y:yPix+5,'text-anchor':'end','font-size':14,fill:'#111827'},tidyNumber(yVal)));
       }
-
-      const pathParts = [];
-      const points = [];
-      const steps = 180;
-      for (let i = 0; i <= steps; i++) {
-        const x = xmin + (i / steps) * (xmax - xmin);
-        let y = current.fn(x);
-        y = Math.max(ymin, Math.min(ymax, y));
-        const px = xScale(x);
-        const py = yScale(y);
-        points.push([px, py]);
-        pathParts.push((i === 0 ? 'M' : 'L') + px + ' ' + py);
+      const pathParts=[], points=[], steps=180;
+      for(let i=0;i<=steps;i++){
+        const x=xmin+(i/steps)*(xmax-xmin);
+        let y=current.fn(x); y=Math.max(ymin,Math.min(ymax,y));
+        const px=xScale(x), py=yScale(y);
+        points.push([px,py]); pathParts.push((i===0?'M':'L')+px+' '+py);
       }
-
-      svg.appendChild(makeSVG('path', {
-        d: pathParts.join(' '),
-        fill: 'none',
-        stroke: '#1d4ed8',
-        'stroke-width': 3.5,
-        'stroke-linejoin': 'round',
-        'stroke-linecap': 'round'
-      }));
-
-      for (let i = 0; i < points.length; i += 20) {
-        svg.appendChild(makeSVG('circle', { cx: points[i][0], cy: points[i][1], r: 4, fill: '#1d4ed8' }));
-      }
-
-      const xAxisLabelY = currentAxisMode.flipY ? 70 : H - 18;
-      addSmartXAxisLabel(svg, xMeta.label, xMeta.unit, m.left + plotW / 2, xAxisLabelY, W, plotW - 20, currentAxisMode.flipY);
-      addSmartYAxisLabelVertical(svg, yMeta.label, yMeta.unit, 62, m.top + plotH / 2, H, 8);
+      svg.appendChild(makeSVG('path',{d:pathParts.join(' '),fill:'none',stroke:'#1d4ed8','stroke-width':4,'stroke-linejoin':'round','stroke-linecap':'round'}));
+      for(let i=0;i<points.length;i+=20) svg.appendChild(makeSVG('circle',{cx:points[i][0],cy:points[i][1],r:4.5,fill:'#1d4ed8'}));
+      svg.appendChild(makeSVG('text',{x:m.left+plotW/2,y:H-40,'text-anchor':'middle','font-size':20,'font-weight':'700',fill:'#111827'},`${xMeta.label} (${xMeta.unit})`));
+      svg.appendChild(makeSVG('text',{x:42,y:m.top+plotH/2,transform:`rotate(-90 42 ${m.top+plotH/2})`,'text-anchor':'middle','font-size':20,'font-weight':'700',fill:'#111827'},`${yMeta.label} (${yMeta.unit})`));
     }
 
-    function tidyNumber(n) {
-      if (Math.abs(n) >= 100 || Number.isInteger(n)) return String(Math.round(n));
-      return n.toFixed(1).replace(/\.0$/, '');
-    }
-
-    // Unicode background
-    const bgCanvas = document.getElementById('ascii-bg');
-    const bgCtx = bgCanvas.getContext('2d');
-
-    const defaultGlyphChars = Array.from("ÆØÅßÐÞĦŁŦŊƩƱƷΔΞΛΩΨΦΣΓЖФДЙЉ҂ѪѬѮѰאבגדהוזחטיכלמנסעפצקרשת░▒▓▖▗▘▙▚▛▜▝▞▟◊○◌◎◍◐◑◒◓◔◕◖◗✦✧✩✪✫✬✭✮✯✰✶✷✹✺✻✼❈❉❊⟁⟆⟊⟐⟡⧉⧖⧗⨀⨁⨂⩮⩯⩪⩫⩬⫷⫸⫻⫽⟑⟒⟓⟔⟕⟖⟗⸎⸕⸖⸗⸘⸙⸚⸛々〆〄あいうえおかきくけこさしすせそたちつてとΩЖאב░◊✶⟁");
-    glyphThemes.qbasic.chars = defaultGlyphChars;
-    let bgW = 0;
-    let bgH = 0;
-    let cell = 22;
-    let trails = [];
-    let streams = [];
-    let lastFrame = 0;
-    let rows = 0;
-    const glyphSpriteCache = new Map();
-
-    function resizeBg() {
-      const dpr = window.devicePixelRatio || 1;
-      bgW = window.innerWidth;
-      bgH = window.innerHeight;
-      bgCanvas.width = Math.floor(bgW * dpr);
-      bgCanvas.height = Math.floor(bgH * dpr);
-      bgCanvas.style.width = bgW + 'px';
-      bgCanvas.style.height = bgH + 'px';
-      bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      cell = Math.max(18, Math.floor(bgW / 55));
-      rows = Math.max(10, Math.ceil(bgH / cell) + 2);
-      clearGlyphSpriteCache();
-      initStreams();
-    }
-
-    function randomGlyph() {
-      const chars = currentGlyphTheme().chars;
-      return chars[Math.floor(Math.random() * chars.length)];
-    }
-
-    function randomX() {
-      return Math.round(Math.random() * bgW);
-    }
-
-    function initStreams() {
-      trails = [];
-      streams = [];
-      const streamCount = currentGlyphTheme().isEmoji
-        ? Math.max(10, Math.floor(bgW / 110))
-        : Math.max(14, Math.floor(bgW / 70));
-
-      for (let i = 0; i < streamCount; i++) {
-        streams.push({
-          x: randomX(),
-          row: -Math.floor(Math.random() * rows) - 1,
-          char: randomGlyph(),
-          stepInterval: 0.06 + Math.random() * 0.12,
-          elapsed: 0,
-          colorIndex: activeGlyphColorIndex
-        });
-      }
-    }
-
-    function updateBg(dt) {
-      const fadeSeconds = currentGlyphTheme().isEmoji ? 2.2 : 4.8;
-
-      for (const stream of streams) {
-        stream.elapsed += dt;
-
-        while (stream.elapsed >= stream.stepInterval) {
-          stream.elapsed -= stream.stepInterval;
-          stream.row += 1;
-
-          stream.colorIndex = activeGlyphColorIndex;
-          trails.push({
-            x: stream.x,
-            y: stream.row * cell + cell / 2,
-            char: stream.char,
-            age: 0,
-            life: fadeSeconds,
-            alpha: 1,
-            colorIndex: stream.colorIndex
-          });
-
-          if (stream.row * cell > bgH + cell) {
-            stream.x = randomX();
-            stream.row = -Math.floor(Math.random() * 8) - 1;
-            stream.char = randomGlyph();
-            stream.stepInterval = 0.06 + Math.random() * 0.12;
-            stream.elapsed = 0;
-            stream.colorIndex = activeGlyphColorIndex;
-            break;
-          }
-        }
-      }
-
-      for (const trail of trails) {
-        trail.age += dt;
-        trail.alpha = Math.max(0, 1 - trail.age / trail.life);
-      }
-
-      trails = trails.filter(t => t.alpha > 0.02);
-    }
-
-    function drawBg() {
-      bgCtx.fillStyle = 'rgba(0,0,0,0.22)';
-      bgCtx.fillRect(0, 0, bgW, bgH);
-
-      const emojiMode = currentGlyphTheme().isEmoji;
-      bgCtx.textAlign = 'center';
-      bgCtx.textBaseline = 'middle';
-      bgCtx.font = currentBackgroundFont();
-
-      for (const t of trails) {
-        if (emojiMode) {
-          const sprite = getGlyphSprite(t.char, 'trail', t.colorIndex);
-          bgCtx.globalAlpha = 0.78 * t.alpha;
-          bgCtx.drawImage(sprite, Math.round(t.x - sprite.width / 2), Math.round(t.y - sprite.height / 2));
-        } else {
-          const palette = neonGlyphPalettes[t.colorIndex % neonGlyphPalettes.length];
-          bgCtx.shadowBlur = 12;
-          bgCtx.shadowColor = rgbaColor(palette.glow, 0.55 * t.alpha);
-          bgCtx.fillStyle = rgbaColor(palette.trail, 0.9 * t.alpha);
-          bgCtx.fillText(t.char, Math.round(t.x), Math.round(t.y));
-        }
-      }
-
-      for (const stream of streams) {
-        const y = stream.row * cell + cell / 2;
-        if (y >= -cell && y <= bgH + cell) {
-          if (emojiMode) {
-            const sprite = getGlyphSprite(stream.char, 'head', stream.colorIndex);
-            bgCtx.globalAlpha = 1;
-            bgCtx.drawImage(sprite, Math.round(stream.x - sprite.width / 2), Math.round(y - sprite.height / 2));
-          } else {
-            const palette = neonGlyphPalettes[stream.colorIndex % neonGlyphPalettes.length];
-            bgCtx.shadowBlur = 16;
-            bgCtx.shadowColor = rgbaColor(palette.glow, 0.9);
-            bgCtx.fillStyle = rgbaColor(palette.head, 0.98);
-            bgCtx.fillText(stream.char, Math.round(stream.x), Math.round(y));
-          }
-        }
-      }
-
-      bgCtx.globalAlpha = 1;
-      bgCtx.shadowBlur = 0;
-    }
-
-    function animateBg(ts) {
-      if (!lastFrame) lastFrame = ts;
-      const dt = Math.min(0.05, (ts - lastFrame) / 1000);
-      lastFrame = ts;
-      updateBg(dt);
-      tickRewardTank(ts);
-      drawBg();
-      requestAnimationFrame(animateBg);
-    }
-
-    window.addEventListener('resize', resizeBg);
-    shopButton.addEventListener('click', openShop);
-    shopCloseButton.addEventListener('click', closeShop);
-    shopOverlay.addEventListener('click', (e) => {
-      if (e.target === shopOverlay) closeShop();
-    });
-
-    updateProgressUnlocks();
-    updateOrbitonHud();
-    updateRewardTankVisual();
-    resizeBg();
-    requestAnimationFrame(animateBg);
-    renderShop();
+    function tidyNumber(n) { return (Math.abs(n)>=100 || Number.isInteger(n)) ? String(Math.round(n)) : n.toFixed(1).replace(/\.0$/,''); }
+    newQuestionBtn.addEventListener('click',()=>pickRandomRelationship(current));
+    revealBtn.addEventListener('click',revealAnswer);
     pickRandomRelationship();
   </script>
 </body>
