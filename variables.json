@@ -554,9 +554,9 @@
         {
           "x_variable": "hydrologic_tiller_response",
           "y_variable": "monsoon_nutrient_diffusion",
-          "relationship_type": "non-linear proportional",
+          "relationship_type": "non-linear",
           "equation": "monsoon_nutrient_diffusion = 220 * (hydrologic_tiller_response / 800)^2",
-          "visible_shape": "non-linear curve through origin"
+          "visible_shape": "non-linear curve"
         }
       ]
     },
@@ -587,9 +587,9 @@
         {
           "x_variable": "latent_harvest_transfer",
           "y_variable": "convective_yield_buffer",
-          "relationship_type": "non-linear proportional",
+          "relationship_type": "non-linear",
           "equation": "convective_yield_buffer = 110 * (latent_harvest_transfer / 48)^2",
-          "visible_shape": "non-linear curve through origin"
+          "visible_shape": "non-linear curve"
         }
       ]
     },
@@ -620,9 +620,9 @@
         {
           "x_variable": "diurnal_fertility_modulation",
           "y_variable": "field_thermal_inertia",
-          "relationship_type": "non-linear proportional",
+          "relationship_type": "non-linear",
           "equation": "field_thermal_inertia = 10 * (diurnal_fertility_modulation / 64)^2",
-          "visible_shape": "non-linear curve through origin"
+          "visible_shape": "non-linear curve"
         }
       ]
     },
@@ -653,9 +653,9 @@
         {
           "x_variable": "transpiration_gradient_efficiency",
           "y_variable": "solar_mulch_absorption",
-          "relationship_type": "non-linear proportional",
+          "relationship_type": "non-linear",
           "equation": "solar_mulch_absorption = 1.6 * (transpiration_gradient_efficiency / 8)^2",
-          "visible_shape": "non-linear curve through origin"
+          "visible_shape": "non-linear curve"
         }
       ]
     },
