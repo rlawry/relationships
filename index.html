@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Do you know your relationships?</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap">
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
   <style>
     :root {
       --bg: #000000;
@@ -49,8 +50,8 @@
       position: relative;
       z-index: 1;
       max-width: 900px;
-      margin: 20px auto;
-      padding: 16px;
+      margin: 0 auto;
+      padding: 8px 16px;
     }
 
     .card {
@@ -133,35 +134,37 @@
     }
 
     .titleBox {
-      display: none;
-      margin-bottom: 10px;
+      display: block;
+      margin-bottom: 0;
       font-size: 18px;
-      font-weight: 700;
-      line-height: 1.35;
+      font-family: 'VT323', 'Courier New', monospace;
+      font-weight: 400;
+      line-height: 1.3;
       text-align: center;
+      color: #111827;
+      background: #ffffff;
+      padding: 4px 8px 0;
     }
 
     .graphPanel {
-      overflow-x: auto;
+      overflow: hidden;
       margin-bottom: 14px;
     }
 
-    svg {
+    #chart {
       display: block;
       width: 100%;
-      max-width: 780px;
-      margin: 0 auto;
-      min-width: 680px;
-      height: auto;
+      max-width: 100%;
+      height: clamp(200px, 42vh, 480px);
       background: #ffffff;
       border: 1px solid #d8d8e3;
-      border-radius: 0;
+      box-sizing: border-box;
     }
 
     .question {
       margin-top: 10px;
       margin-bottom: 10px;
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 700;
       line-height: 1.4;
       text-align: center;
@@ -175,6 +178,12 @@
 
     .options.relationship-mode {
       grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @media (max-width: 760px) {
+      .options.relationship-mode {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     .options.direction-mode {
@@ -313,10 +322,10 @@
     }
 
     .shopWindow {
-      width: min(940px, 100%);
+      width: min(560px, 100%);
       max-height: min(86vh, 900px);
       overflow: auto;
-      padding: 16px;
+      padding: 10px 12px;
       border: 2px solid rgba(190, 156, 255, 0.7);
       background: rgba(8, 4, 18, 0.97);
       box-shadow: 0 0 28px rgba(178, 108, 255, 0.3);
@@ -327,30 +336,30 @@
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 8px;
+      margin-bottom: 8px;
     }
 
     .shopTitle {
-      font-size: 36px;
+      font-size: 32px;
       line-height: 1;
     }
 
     .shopClose {
       min-height: 0;
-      font-size: 24px;
+      font-size: 22px;
       text-align: center;
     }
 
     .shopInfo {
-      font-size: 24px;
-      margin-bottom: 4px;
+      font-size: 20px;
+      margin-bottom: 2px;
       color: #ffe9a5;
     }
 
     .shopSpendInfo {
-      font-size: 22px;
-      margin-bottom: 12px;
+      font-size: 18px;
+      margin-bottom: 8px;
       color: #8fd4ff;
     }
 
@@ -401,13 +410,30 @@
 
     .themeCard {
       display: grid;
-      grid-template-columns: minmax(140px, 1.15fr) minmax(170px, 1fr) minmax(130px, 0.9fr) 170px;
+      grid-template-columns: 1fr auto auto;
+      grid-template-rows: auto auto;
       align-items: center;
-      gap: 10px;
+      gap: 2px 10px;
       border: 1px solid rgba(190, 156, 255, 0.45);
       background: rgba(20, 10, 42, 0.88);
-      padding: 10px 12px;
+      padding: 7px 10px;
       box-shadow: 0 0 12px rgba(178, 108, 255, 0.14);
+    }
+
+    .themeName    { grid-column: 1; grid-row: 1; }
+    .themePreview { grid-column: 1; grid-row: 2; }
+    .themeStatus  { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+    .themeAction  { grid-column: 3; grid-row: 1 / 3; align-self: center; }
+
+    @media (max-width: 520px) {
+      .themeCard {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto auto;
+      }
+      .themeName    { grid-column: 1; grid-row: 1; }
+      .themePreview { grid-column: 1; grid-row: 2; }
+      .themeStatus  { grid-column: 2; grid-row: 1; text-align: right; align-self: center; }
+      .themeAction  { grid-column: 1 / -1; grid-row: 3; }
     }
 
     .themeCard.equipped {
@@ -416,14 +442,14 @@
     }
 
     .themeName {
-      font-size: 28px;
+      font-size: 22px;
       margin-bottom: 0;
     }
 
     .themePrice,
     .themePreview,
     .themeStatus {
-      font-size: 20px;
+      font-size: 18px;
       margin-bottom: 0;
     }
 
@@ -436,13 +462,17 @@
     .themePreview {
       min-height: 0;
       letter-spacing: 0.02em;
+      color: rgba(244, 236, 255, 0.7);
     }
 
     .themeAction {
-      width: 100%;
+      width: 120px;
+      flex-shrink: 0;
       min-height: 0;
       text-align: center;
       font-size: 18px;
+      padding: 6px 10px;
+      min-height: 34px;
     }
 
     .orbitonBurst {
@@ -635,7 +665,7 @@
       </div>
       <div class="titleBox" id="chartTitle"></div>
       <div class="graphPanel">
-        <svg id="chart" viewBox="0 0 780 500" aria-label="relationship graph"></svg>
+        <div id="chart" aria-label="relationship graph"></div>
       </div>
       <div class="question" id="questionText"></div>
       <div class="options" id="options"></div>
@@ -667,37 +697,39 @@
         <div class="tutorialTitle">How to Read These Graphs</div>
         <button class="tutorialClose" id="tutorialCloseButton">Close</button>
       </div>
-      <p class="tutorialIntro">Look at the shape first, then ignore whether the axes are flipped. A flipped graph can
-        look strange, but the relationship type is still determined by whether the graph is straight or curved, whether
-        it rises or falls, and whether it goes through the origin.</p>
+      <p class="tutorialIntro">Every graph shows a relationship between two variables. Your job is to identify what type of relationship it is — or predict which direction y moves as x increases. Here is what to look for.</p>
       <div class="tutorialGrid">
+
         <div class="tutorialCard">
           <h3>Proportional</h3>
-          <p>Look for a graph that goes through the origin and keeps the same overall ratio. In this game, some
-            proportional relationships are straight lines and some are curved through the origin. If it starts at zero
-            and stays tied to zero, think proportional.</p>
+          <p>The graph passes through the origin (0, 0) — meaning when x is zero, y is also zero. The relationship stays tied to zero at all times. The line or curve may be steep or shallow, but it always starts at the corner. Both straight lines through the origin and curves through the origin count as proportional.</p>
         </div>
+
         <div class="tutorialCard">
           <h3>Linear (nonproportional)</h3>
-          <p>Look for a straight line that does <strong>not</strong> go through the origin. It rises at a steady rate,
-            but it has a starting amount already built in.</p>
+          <p>The graph is a perfectly straight line, but it does NOT pass through the origin. When x is zero, y already has a value — there is a built-in starting amount. The line rises or falls at a steady, constant rate. Look for: straight line, does not cross at (0, 0).</p>
         </div>
+
         <div class="tutorialCard">
-          <h3>Negative linear/opposite</h3>
-          <p>Look for a straight line that slopes downward. As x increases, y decreases. The line is still straight, but
-            the variables move in opposite directions.</p>
+          <h3>Negative linear / opposite</h3>
+          <p>The graph is a straight line that slopes downward from left to right. As x increases, y decreases. The variables move in opposite directions at a steady rate. The line may or may not cross the origin — what matters is that it is straight and falling.</p>
         </div>
+
         <div class="tutorialCard">
           <h3>Nonlinear</h3>
-          <p>Look for a curve instead of a straight line. The rate of change is not constant. If the graph bends and
-            does not simply make a straight rising or falling line, it is nonlinear.</p>
+          <p>The graph is a curve — the rate of change is not constant. It bends. Some nonlinear graphs start above zero on the y-axis and curve upward. Others may start near zero but still bend. The key is that the shape is not a straight line. Do not mistake a gentle curve for a straight line — look carefully at whether the steepness changes as you move along the graph.</p>
         </div>
+
         <div class="tutorialCard">
-          <h3>When the axes are flipped</h3>
-          <p>Do not let the axis direction trick you. A flipped axis can move the picture around, but it does not change
-            whether the graph is straight or curved, or whether the variables move together or in opposite directions.
-          </p>
+          <h3>Direction question: Increases or Decreases?</h3>
+          <p>When asked "as x increases, y...?", trace the graph from left to right. If the graph goes up as you move right, y increases. If it goes down, y decreases. This applies to all graph types. If the axes are flipped, focus on the labeled directions — do not rely on which way the line visually points.</p>
         </div>
+
+        <div class="tutorialCard">
+          <h3>When the axes are flipped (Regents Mode)</h3>
+          <p>In Normal and Hardcore Regents modes, one or both axes may be reversed. The numbers still tell you the true direction. Look at the axis labels and tick values — if the axis counts downward, the graph is flipped. The relationship type does not change just because an axis is reversed. A straight line is still straight. A curve is still a curve. Focus on shape, not orientation.</p>
+        </div>
+
       </div>
     </div>
   </div>
@@ -767,73 +799,106 @@
     };
 
     const relationships = [
-      { x: 'seasonal_atmospheric_yield_coherence', y: 'thermal_crop_sync_phase', type: 'linear (nonproportional)', fn: x => 0.544 * x + 19.4, xRange: [0, 100], yRange: [5, 85] },
-      { x: 'thermal_crop_sync_phase', y: 'vapor_root_efficiency_score', type: 'proportional', fn: x => 0.110118 * x, xRange: [0, 85], yRange: [0, 12] },
-      { x: 'vapor_root_efficiency_score', y: 'solar_moisture_alignment_factor', type: 'negative linear/opposite', fn: x => -13.033333 * x + 203.2, xRange: [0, 12], yRange: [10, 240] },
-      { x: 'solar_moisture_alignment_factor', y: 'seasonal_atmospheric_yield_coherence', type: 'nonlinear', fn: x => 12 + 76 * Math.pow((x - 10) / 230, 2), xRange: [10, 240], yRange: [0, 100] },
-      { x: 'agroclimatic_flux_ratio', y: 'barometric_harvest_stability', type: 'linear (nonproportional)', fn: x => 27.2 * x + -12.8, xRange: [0, 1], yRange: [-20, 20] },
-      { x: 'barometric_harvest_stability', y: 'photosynthetic_rainfall_coupling', type: 'proportional', fn: x => 11.7 * x, xRange: [0, 20], yRange: [0, 300] },
-      { x: 'photosynthetic_rainfall_coupling', y: 'seasonal_evapotranspiration_harmony', type: 'negative linear/opposite', fn: x => -0.272 * x + 140.8, xRange: [0, 300], yRange: [40, 160] },
-      { x: 'seasonal_evapotranspiration_harmony', y: 'agroclimatic_flux_ratio', type: 'nonlinear', fn: x => 0.12 + 0.76 * Math.pow((x - 40) / 120, 2), xRange: [40, 160], yRange: [0, 1] },
-      { x: 'carbon_loam_responsiveness', y: 'radiative_pasture_optimization', type: 'linear (nonproportional)', fn: x => 0.01088 * x + 2.44, xRange: [0, 500], yRange: [1, 9] },
-      { x: 'radiative_pasture_optimization', y: 'humidity_nutrient_transfer_rate', type: 'proportional', fn: x => 6.5 * x, xRange: [0, 9], yRange: [0, 75] },
-      { x: 'humidity_nutrient_transfer_rate', y: 'windborne_pollination_efficiency', type: 'negative linear/opposite', fn: x => -3.173333 * x + 344, xRange: [0, 75], yRange: [50, 400] },
-      { x: 'windborne_pollination_efficiency', y: 'carbon_loam_responsiveness', type: 'nonlinear', fn: x => 60 + 380 * Math.pow((x - 50) / 350, 2), xRange: [50, 400], yRange: [0, 500] },
-      { x: 'thermal_canopy_retention', y: 'soil_albedo_productivity', type: 'linear (nonproportional)', fn: x => 3.4 * x + 62, xRange: [-5, 45], yRange: [0, 250] },
-      { x: 'soil_albedo_productivity', y: 'precipitation_biomass_coordination', type: 'proportional', fn: x => 0.2964 * x, xRange: [0, 250], yRange: [0, 95] },
-      { x: 'precipitation_biomass_coordination', y: 'climatic_root_penetration_depth', type: 'negative linear/opposite', fn: x => -0.272 * x + 30.64, xRange: [20, 95], yRange: [0, 30] },
-      { x: 'climatic_root_penetration_depth', y: 'thermal_canopy_retention', type: 'nonlinear', fn: x => 1 + 38 * Math.pow((x - 0) / 30, 2), xRange: [0, 30], yRange: [-5, 45] },
-      { x: 'greenhouse_field_stability', y: 'agrothermal_vapor_loading', type: 'linear (nonproportional)', fn: x => 0.204 * x + -13.08, xRange: [80, 140], yRange: [0, 18] },
-      { x: 'agrothermal_vapor_loading', y: 'dewpoint_grain_conversion', type: 'proportional', fn: x => 39 * x, xRange: [0, 18], yRange: [0, 900] },
-      { x: 'dewpoint_grain_conversion', y: 'insolation_furrow_efficiency', type: 'negative linear/opposite', fn: x => -0.051 * x + 55.5, xRange: [100, 900], yRange: [0, 60] },
-      { x: 'insolation_furrow_efficiency', y: 'greenhouse_field_stability', type: 'nonlinear', fn: x => 87.2 + 45.6 * Math.pow((x - 0) / 60, 2), xRange: [0, 60], yRange: [80, 140] },
-      { x: 'monsoon_nutrient_diffusion', y: 'pasture_heat_moderation', type: 'linear (nonproportional)', fn: x => 0.17 * x + 24.9, xRange: [0, 220], yRange: [15, 70] },
-      { x: 'pasture_heat_moderation', y: 'crop_boundary_layer_utilization', type: 'proportional', fn: x => 0.027857 * x, xRange: [0, 70], yRange: [0, 2.5] },
-      { x: 'crop_boundary_layer_utilization', y: 'hydrologic_tiller_response', type: 'negative linear/opposite', fn: x => -217.6 * x + 672, xRange: [0, 2.5], yRange: [0, 800] },
-      { x: 'hydrologic_tiller_response', y: 'monsoon_nutrient_diffusion', type: 'nonlinear', fn: x => 26.4 + 167.2 * Math.pow((x - 0) / 800, 2), xRange: [0, 800], yRange: [0, 220] },
-      { x: 'convective_yield_buffer', y: 'canopy_pressure_regulation', type: 'linear (nonproportional)', fn: x => 1.133333 * x + 947.333333, xRange: [-10, 110], yRange: [900, 1100] },
-      { x: 'canopy_pressure_regulation', y: 'soil_moisture_resonance', type: 'proportional', fn: x => 0.009927 * x, xRange: [0, 1100], yRange: [0, 14] },
-      { x: 'soil_moisture_resonance', y: 'latent_harvest_transfer', type: 'negative linear/opposite', fn: x => -2.331429 * x + 40.32, xRange: [0, 14], yRange: [0, 48] },
-      { x: 'latent_harvest_transfer', y: 'convective_yield_buffer', type: 'nonlinear', fn: x => 4.4 + 91.2 * Math.pow((x - 0) / 48, 2), xRange: [0, 48], yRange: [-10, 110] },
-      { x: 'field_thermal_inertia', y: 'agrobaric_saturation_level', type: 'linear (nonproportional)', fn: x => 6.8 * x + 18, xRange: [0, 10], yRange: [0, 100] },
-      { x: 'agrobaric_saturation_level', y: 'root_zone_cloud_coupling', type: 'proportional', fn: x => 2.808 * x, xRange: [0, 100], yRange: [0, 360] },
-      { x: 'root_zone_cloud_coupling', y: 'diurnal_fertility_modulation', type: 'negative linear/opposite', fn: x => -0.120889 * x + 53.76, xRange: [0, 360], yRange: [0, 64] },
-      { x: 'diurnal_fertility_modulation', y: 'field_thermal_inertia', type: 'nonlinear', fn: x => 1.2 + 7.6 * Math.pow((x - 0) / 64, 2), xRange: [0, 64], yRange: [0, 10] },
-      { x: 'solar_mulch_absorption', y: 'climate_furrow_persistence', type: 'linear (nonproportional)', fn: x => 22.1 * x + 9.36, xRange: [0, 1.6], yRange: [0, 52] },
-      { x: 'climate_furrow_persistence', y: 'biomass_dew_retention', type: 'proportional', fn: x => 1.95 * x, xRange: [0, 52], yRange: [0, 130] },
-      { x: 'biomass_dew_retention', y: 'transpiration_gradient_efficiency', type: 'negative linear/opposite', fn: x => -0.041846 * x + 6.72, xRange: [0, 130], yRange: [0, 8] },
-      { x: 'transpiration_gradient_efficiency', y: 'solar_mulch_absorption', type: 'nonlinear', fn: x => 0.192 + 1.216 * Math.pow((x - 0) / 8, 2), xRange: [0, 8], yRange: [0, 1.6] },
-      { x: 'seasonal_loam_acceleration', y: 'rainfed_canopy_compression', type: 'linear (nonproportional)', fn: x => 3.049949 * x + 7.92, xRange: [0, 9.81], yRange: [0, 44] },
-      { x: 'rainfed_canopy_compression', y: 'methane_pasture_balance', type: 'proportional', fn: x => 0.886364 * x, xRange: [0, 44], yRange: [0, 50] },
-      { x: 'methane_pasture_balance', y: 'agronomic_jetstream_utilization', type: 'negative linear/opposite', fn: x => -4.896 * x + 360, xRange: [-50, 50], yRange: [0, 720] },
-      { x: 'agronomic_jetstream_utilization', y: 'seasonal_loam_acceleration', type: 'nonlinear', fn: x => 1.1772 + 7.4556 * Math.pow((x - 0) / 720, 2), xRange: [0, 720], yRange: [0, 9.81] },
-      { x: 'ozone_areal_drift_density', y: 'ammonia_thermal_volume_loading', type: 'linear (nonproportional)', fn: x => 8.311111 * x + 39.6, xRange: [0, 18], yRange: [0, 220] },
-      { x: 'ammonia_thermal_volume_loading', y: 'carbon_dioxide_pressure_area_ratio', type: 'proportional', fn: x => 0.336818 * x, xRange: [0, 220], yRange: [0, 95] },
-      { x: 'carbon_dioxide_pressure_area_ratio', y: 'methane_linear_time_burden', type: 'negative linear/opposite', fn: x => -0.429474 * x + 50.4, xRange: [0, 95], yRange: [0, 60] },
-      { x: 'methane_linear_time_burden', y: 'ozone_areal_drift_density', type: 'nonlinear', fn: x => 2.16 + 13.68 * Math.pow((x - 0) / 60, 2), xRange: [0, 60], yRange: [0, 18] },
-      { x: 'nitrogen_dioxide_radiant_surface_dose', y: 'hydrogen_sulfide_pressure_temperature_loading', type: 'linear (nonproportional)', fn: x => 0.317333 * x + 25.2, xRange: [0, 300], yRange: [0, 140] },
-      { x: 'hydrogen_sulfide_pressure_temperature_loading', y: 'sulfur_dioxide_thermal_density_gradient', type: 'proportional', fn: x => 0.267429 * x, xRange: [0, 140], yRange: [0, 48] },
-      { x: 'sulfur_dioxide_thermal_density_gradient', y: 'carbon_dioxide_area_time_molar_spread', type: 'negative linear/opposite', fn: x => -0.136 * x + 8.448, xRange: [-12, 48], yRange: [0, 12] },
-      { x: 'carbon_dioxide_area_time_molar_spread', y: 'nitrogen_dioxide_radiant_surface_dose', type: 'nonlinear', fn: x => 36 + 228 * Math.pow((x - 0) / 12, 2), xRange: [0, 12], yRange: [0, 300] },
-      { x: 'oxygen_thermal_linear_molar_index', y: 'ammonia_pressure_surface_mass_load', type: 'linear (nonproportional)', fn: x => 3.2 * x + 72, xRange: [0, 85], yRange: [0, 400] },
-      { x: 'ammonia_pressure_surface_mass_load', y: 'methanol_radiant_molar_density', type: 'proportional', fn: x => 0.312 * x, xRange: [0, 400], yRange: [0, 160] },
-      { x: 'methanol_radiant_molar_density', y: 'nitrate_accelerative_linear_mass_index', type: 'negative linear/opposite', fn: x => -0.041692 * x + 8.2404, xRange: [0, 160], yRange: [0, 9.81] },
-      { x: 'nitrate_accelerative_linear_mass_index', y: 'oxygen_thermal_linear_molar_index', type: 'nonlinear', fn: x => 10.2 + 64.6 * Math.pow((x - 0) / 9.81, 2), xRange: [0, 9.81], yRange: [0, 85] },
-      { x: 'carbon_dioxide_thermal_time_molar_drift', y: 'hydrogen_peroxide_pressure_time_ratio', type: 'linear (nonproportional)', fn: x => 0.836923 * x + 11.52, xRange: [0, 52], yRange: [0, 64] },
-      { x: 'hydrogen_peroxide_pressure_time_ratio', y: 'ethane_thermal_linear_mass_density', type: 'proportional', fn: x => 0.365625 * x, xRange: [0, 64], yRange: [0, 30] },
-      { x: 'ethane_thermal_linear_mass_density', y: 'ammonium_radiative_surface_flux', type: 'negative linear/opposite', fn: x => -2.493333 * x + 92.4, xRange: [0, 30], yRange: [0, 110] },
-      { x: 'ammonium_radiative_surface_flux', y: 'carbon_dioxide_thermal_time_molar_drift', type: 'nonlinear', fn: x => 6.24 + 39.52 * Math.pow((x - 0) / 110, 2), xRange: [0, 110], yRange: [0, 52] },
-      { x: 'sulfate_thermal_areal_mole_register', y: 'methane_pressure_length_time_coefficient', type: 'linear (nonproportional)', fn: x => 0.204 * x + 13.5, xRange: [0, 250], yRange: [0, 75] },
-      { x: 'methane_pressure_length_time_coefficient', y: 'oxygen_thermal_time_density_burden', type: 'proportional', fn: x => 0.4576 * x, xRange: [0, 75], yRange: [0, 44] },
-      { x: 'oxygen_thermal_time_density_burden', y: 'glucose_thermal_time_acceleration_load', type: 'negative linear/opposite', fn: x => -12.363636 * x + 672, xRange: [0, 44], yRange: [0, 800] },
-      { x: 'glucose_thermal_time_acceleration_load', y: 'sulfate_thermal_areal_mole_register', type: 'nonlinear', fn: x => 30 + 190 * Math.pow((x - 0) / 800, 2), xRange: [0, 800], yRange: [0, 250] }
+      // === LINEAR (NONPROPORTIONAL) — slopes all between 0.35–0.80, y-intercepts 20–75 ===
+      { x: 'seasonal_atmospheric_yield_coherence', y: 'thermal_crop_sync_phase', type: 'linear (nonproportional)', fn: x => 0.75 * x + 22, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'agroclimatic_flux_ratio', y: 'barometric_harvest_stability', type: 'linear (nonproportional)', fn: x => 0.40 * x + 55, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'carbon_loam_responsiveness', y: 'radiative_pasture_optimization', type: 'linear (nonproportional)', fn: x => 0.50 * x + 30, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'greenhouse_field_stability', y: 'agrothermal_vapor_loading', type: 'linear (nonproportional)', fn: x => 0.72 * x + 25, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'monsoon_nutrient_diffusion', y: 'pasture_heat_moderation', type: 'linear (nonproportional)', fn: x => 0.38 * x + 45, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'convective_yield_buffer', y: 'canopy_pressure_regulation', type: 'linear (nonproportional)', fn: x => 0.65 * x + 20, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'field_thermal_inertia', y: 'agrobaric_saturation_level', type: 'linear (nonproportional)', fn: x => 0.35 * x + 60, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'solar_mulch_absorption', y: 'climate_furrow_persistence', type: 'linear (nonproportional)', fn: x => 0.78 * x + 20, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'seasonal_loam_acceleration', y: 'rainfed_canopy_compression', type: 'linear (nonproportional)', fn: x => 0.45 * x + 42, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'ozone_areal_drift_density', y: 'ammonia_thermal_volume_loading', type: 'linear (nonproportional)', fn: x => 0.55 * x + 30, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'nitrogen_dioxide_radiant_surface_dose', y: 'hydrogen_sulfide_pressure_temperature_loading', type: 'linear (nonproportional)', fn: x => 0.62 * x + 28, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'oxygen_thermal_linear_molar_index', y: 'ammonia_pressure_surface_mass_load', type: 'linear (nonproportional)', fn: x => 0.38 * x + 55, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'carbon_dioxide_thermal_time_molar_drift', y: 'hydrogen_peroxide_pressure_time_ratio', type: 'linear (nonproportional)', fn: x => 0.78 * x + 20, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'sulfate_thermal_areal_mole_register', y: 'methane_pressure_length_time_coefficient', type: 'linear (nonproportional)', fn: x => 0.42 * x + 50, xRange: [0, 100], yRange: [0, 100] },
+
+      // === PROPORTIONAL — varied slopes (must pass through origin) ===
+      // steep: nearly 1:1
+      { x: 'thermal_crop_sync_phase', y: 'vapor_root_efficiency_score', type: 'proportional', fn: x => 0.9 * x, xRange: [0, 100], yRange: [0, 100] },
+      // shallow: gentle rise
+      { x: 'barometric_harvest_stability', y: 'photosynthetic_rainfall_coupling', type: 'proportional', fn: x => 0.2 * x, xRange: [0, 100], yRange: [0, 100] },
+      // moderate
+      { x: 'radiative_pasture_optimization', y: 'humidity_nutrient_transfer_rate', type: 'proportional', fn: x => 0.55 * x, xRange: [0, 100], yRange: [0, 100] },
+      // very steep
+      { x: 'agrothermal_vapor_loading', y: 'dewpoint_grain_conversion', type: 'proportional', fn: x => 0.95 * x, xRange: [0, 100], yRange: [0, 100] },
+      // gentle
+      { x: 'pasture_heat_moderation', y: 'crop_boundary_layer_utilization', type: 'proportional', fn: x => 0.15 * x, xRange: [0, 100], yRange: [0, 100] },
+      // moderate-steep
+      { x: 'canopy_pressure_regulation', y: 'soil_moisture_resonance', type: 'proportional', fn: x => 0.7 * x, xRange: [0, 100], yRange: [0, 100] },
+      // nearly flat
+      { x: 'agrobaric_saturation_level', y: 'root_zone_cloud_coupling', type: 'proportional', fn: x => 0.08 * x, xRange: [0, 100], yRange: [0, 100] },
+      // moderate
+      { x: 'climate_furrow_persistence', y: 'biomass_dew_retention', type: 'proportional', fn: x => 0.45 * x, xRange: [0, 100], yRange: [0, 100] },
+      // steep
+      { x: 'rainfed_canopy_compression', y: 'methane_pasture_balance', type: 'proportional', fn: x => 0.82 * x, xRange: [0, 100], yRange: [0, 100] },
+      // shallow-moderate
+      { x: 'ammonia_thermal_volume_loading', y: 'carbon_dioxide_pressure_area_ratio', type: 'proportional', fn: x => 0.32 * x, xRange: [0, 100], yRange: [0, 100] },
+      // moderate
+      { x: 'hydrogen_sulfide_pressure_temperature_loading', y: 'sulfur_dioxide_thermal_density_gradient', type: 'proportional', fn: x => 0.6 * x, xRange: [0, 100], yRange: [0, 100] },
+      // gentle
+      { x: 'ammonia_pressure_surface_mass_load', y: 'methanol_radiant_molar_density', type: 'proportional', fn: x => 0.25 * x, xRange: [0, 100], yRange: [0, 100] },
+      // steep
+      { x: 'hydrogen_peroxide_pressure_time_ratio', y: 'ethane_thermal_linear_mass_density', type: 'proportional', fn: x => 0.88 * x, xRange: [0, 100], yRange: [0, 100] },
+      // moderate-shallow
+      { x: 'methane_pressure_length_time_coefficient', y: 'oxygen_thermal_time_density_burden', type: 'proportional', fn: x => 0.38 * x, xRange: [0, 100], yRange: [0, 100] },
+
+      // === NEGATIVE LINEAR — slopes all between 0.35–0.90 so line is unambiguously straight ===
+      { x: 'vapor_root_efficiency_score', y: 'solar_moisture_alignment_factor', type: 'negative linear/opposite', fn: x => -0.88 * x + 95, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'photosynthetic_rainfall_coupling', y: 'seasonal_evapotranspiration_harmony', type: 'negative linear/opposite', fn: x => -0.42 * x + 80, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'humidity_nutrient_transfer_rate', y: 'windborne_pollination_efficiency', type: 'negative linear/opposite', fn: x => -0.55 * x + 72, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'dewpoint_grain_conversion', y: 'insolation_furrow_efficiency', type: 'negative linear/opposite', fn: x => -0.75 * x + 85, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'crop_boundary_layer_utilization', y: 'hydrologic_tiller_response', type: 'negative linear/opposite', fn: x => -0.38 * x + 65, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'soil_moisture_resonance', y: 'latent_harvest_transfer', type: 'negative linear/opposite', fn: x => -0.50 * x + 75, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'root_zone_cloud_coupling', y: 'diurnal_fertility_modulation', type: 'negative linear/opposite', fn: x => -0.65 * x + 78, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'biomass_dew_retention', y: 'transpiration_gradient_efficiency', type: 'negative linear/opposite', fn: x => -0.45 * x + 88, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'methane_pasture_balance', y: 'agronomic_jetstream_utilization', type: 'negative linear/opposite', fn: x => -0.60 * x + 82, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'carbon_dioxide_pressure_area_ratio', y: 'methane_linear_time_burden', type: 'negative linear/opposite', fn: x => -0.90 * x + 95, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'sulfur_dioxide_thermal_density_gradient', y: 'carbon_dioxide_area_time_molar_spread', type: 'negative linear/opposite', fn: x => -0.48 * x + 70, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'methanol_radiant_molar_density', y: 'nitrate_accelerative_linear_mass_index', type: 'negative linear/opposite', fn: x => -0.40 * x + 62, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'ethane_thermal_linear_mass_density', y: 'ammonium_radiative_surface_flux', type: 'negative linear/opposite', fn: x => -0.82 * x + 90, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'oxygen_thermal_time_density_burden', y: 'glucose_thermal_time_acceleration_load', type: 'negative linear/opposite', fn: x => -0.35 * x + 68, xRange: [0, 100], yRange: [0, 100] },
+
+      // === NONLINEAR — varied curvature; through-origin ones tagged as 'nonlinear proportional' ===
+      // cubic through origin — shoots up fast near the right
+      { x: 'solar_moisture_alignment_factor', y: 'seasonal_atmospheric_yield_coherence', type: 'nonlinear proportional', fn: x => Math.pow(x / 100, 3) * 100, xRange: [0, 100], yRange: [0, 100] },
+      // gentle power curve through origin
+      { x: 'seasonal_evapotranspiration_harmony', y: 'agroclimatic_flux_ratio', type: 'nonlinear proportional', fn: x => Math.pow(x / 100, 1.5) * 100, xRange: [0, 100], yRange: [0, 100] },
+      // standard quadratic through origin
+      { x: 'windborne_pollination_efficiency', y: 'carbon_loam_responsiveness', type: 'nonlinear proportional', fn: x => Math.pow(x / 100, 2) * 100, xRange: [0, 100], yRange: [0, 100] },
+      // very steep curve through origin — nearly flat then rockets
+      { x: 'climatic_root_penetration_depth', y: 'thermal_canopy_retention', type: 'nonlinear proportional', fn: x => Math.pow(x / 100, 4) * 100, xRange: [0, 100], yRange: [0, 100] },
+      // nonlinear NOT through origin — y-intercept clearly at 20
+      { x: 'insolation_furrow_efficiency', y: 'greenhouse_field_stability', type: 'nonlinear', fn: x => 20 + Math.pow(x / 100, 2) * 80, xRange: [0, 100], yRange: [0, 100] },
+      // nonlinear, y-intercept at 35
+      { x: 'hydrologic_tiller_response', y: 'monsoon_nutrient_diffusion', type: 'nonlinear', fn: x => 35 + Math.pow(x / 100, 2) * 65, xRange: [0, 100], yRange: [0, 100] },
+      // nonlinear, y-intercept at 50
+      { x: 'latent_harvest_transfer', y: 'convective_yield_buffer', type: 'nonlinear', fn: x => 50 + Math.pow(x / 100, 1.5) * 50, xRange: [0, 100], yRange: [0, 100] },
+      // nonlinear, y-intercept clearly at 5 — close but visible
+      { x: 'diurnal_fertility_modulation', y: 'field_thermal_inertia', type: 'nonlinear', fn: x => 25 + Math.pow(x / 100, 3) * 75, xRange: [0, 100], yRange: [0, 100] },
+      // nonlinear, y-intercept at 15
+      { x: 'transpiration_gradient_efficiency', y: 'solar_mulch_absorption', type: 'nonlinear', fn: x => 15 + Math.pow(x / 100, 2) * 85, xRange: [0, 100], yRange: [0, 100] },
+      // power 1.3 through origin — very gradual curve
+      { x: 'agronomic_jetstream_utilization', y: 'seasonal_loam_acceleration', type: 'nonlinear proportional', fn: x => Math.pow(x / 100, 1.3) * 100, xRange: [0, 100], yRange: [0, 100] },
+      // power 2.5 through origin
+      { x: 'methane_linear_time_burden', y: 'ozone_areal_drift_density', type: 'nonlinear proportional', fn: x => Math.pow(x / 100, 2.5) * 100, xRange: [0, 100], yRange: [0, 100] },
+      // nonlinear, high y-intercept at 60
+      { x: 'carbon_dioxide_area_time_molar_spread', y: 'nitrogen_dioxide_radiant_surface_dose', type: 'nonlinear', fn: x => 60 + Math.pow(x / 100, 2) * 40, xRange: [0, 100], yRange: [0, 100] },
+      // cubic through origin
+      { x: 'nitrate_accelerative_linear_mass_index', y: 'oxygen_thermal_linear_molar_index', type: 'nonlinear proportional', fn: x => Math.pow(x / 100, 3) * 100, xRange: [0, 100], yRange: [0, 100] },
+      // nonlinear, y-intercept at 25
+      { x: 'ammonium_radiative_surface_flux', y: 'carbon_dioxide_thermal_time_molar_drift', type: 'nonlinear', fn: x => 25 + Math.pow(x / 100, 2) * 75, xRange: [0, 100], yRange: [0, 100] },
+      // power 1.7 through origin
+      { x: 'glucose_thermal_time_acceleration_load', y: 'sulfate_thermal_areal_mole_register', type: 'nonlinear proportional', fn: x => Math.pow(x / 100, 1.7) * 100, xRange: [0, 100], yRange: [0, 100] },
     ];
 
     const questionModes = ["relationshipType", "directionChange"];
     const relationshipOptions = ["proportional", "linear (nonproportional)", "negative linear/opposite", "nonlinear"];
     const directionOptions = ["Increases", "Decreases"];
 
-    const svg = document.getElementById('chart');
+    const chartDiv = document.getElementById('chart');
     const chartTitle = document.getElementById('chartTitle');
     const questionText = document.getElementById('questionText');
     const optionsBox = document.getElementById('options');
@@ -855,6 +920,9 @@
     const rewardTankResidue = document.getElementById('rewardTankResidue');
     const rewardTankMax = document.getElementById('rewardTankMax');
     const rewardTankMin = document.getElementById('rewardTankMin');
+    const tutorialButton = document.getElementById('tutorialButton');
+    const tutorialCloseButton = document.getElementById('tutorialCloseButton');
+    const tutorialOverlay = document.getElementById('tutorialOverlay');
 
     let current = null;
     let currentAxisMode = { flipX: false, flipY: false };
@@ -864,6 +932,7 @@
     let advanceTimer = null;
     let orbiton = 0;
     let correctStreak = 0;
+    let peakStreak = 0;
     let shopUnlocked = true;
     const shopUnlockOrbiton = 1000;
     const threeOptionUnlockPrice = 500000;
@@ -1005,12 +1074,22 @@
       if (!session) return;
       session.active = false;
       activeMusicSessions.delete(session);
-      session.sources.forEach(source => {
-        try { source.stop(); } catch (e) { }
-        try { source.disconnect(); } catch (e) { }
-      });
-      session.sources.length = 0;
-      try { session.gainNode.disconnect(); } catch (e) { }
+      const ctx = getMusicContext();
+      const now = ctx.currentTime;
+      const rampEnd = now + 0.015;
+      try {
+        session.gainNode.gain.cancelScheduledValues(now);
+        session.gainNode.gain.setValueAtTime(session.gainNode.gain.value, now);
+        session.gainNode.gain.linearRampToValueAtTime(0, rampEnd);
+      } catch (e) { }
+      setTimeout(() => {
+        session.sources.forEach(source => {
+          try { source.stop(); } catch (e) { }
+          try { source.disconnect(); } catch (e) { }
+        });
+        session.sources.length = 0;
+        try { session.gainNode.disconnect(); } catch (e) { }
+      }, 20);
     }
 
     function fadeOutAndDisposeMusicSession(session, duration = 900) {
@@ -1081,8 +1160,10 @@
       rightSound.volume = sfxVolume;
       wrongSound.volume = sfxVolume;
       if (musicMasterGain && musicAudioCtx) {
-        musicMasterGain.gain.cancelScheduledValues(musicAudioCtx.currentTime);
-        musicMasterGain.gain.setValueAtTime(musicVolume, musicAudioCtx.currentTime);
+        const now = musicAudioCtx.currentTime;
+        musicMasterGain.gain.cancelScheduledValues(now);
+        musicMasterGain.gain.setValueAtTime(musicMasterGain.gain.value, now);
+        musicMasterGain.gain.linearRampToValueAtTime(musicVolume, now + 0.04);
       }
       const percent = Math.round(audioMasterVolume * 100);
       volumeDownButton.title = `Volume ${percent}%`;
@@ -1250,11 +1331,11 @@
     }
 
     function isNormalAvailable() {
-      return correctStreak >= 20;
+      return peakStreak >= 20;
     }
 
     function isHardcoreAvailable() {
-      return correctStreak >= 40;
+      return peakStreak >= 40;
     }
 
     function getCurrentRegentsTier() {
@@ -1272,8 +1353,8 @@
 
     function getGraphBackgroundColor() {
       const tier = getCurrentRegentsTier();
-      if (tier === 'hardcore') return '#fff1f1';
-      if (tier === 'normal') return '#f2fff2';
+      if (tier === 'hardcore') return '#ffe0e0';
+      if (tier === 'normal') return '#ccffcc';
       return '#ffffff';
     }
 
@@ -1294,8 +1375,8 @@
       const regentsTier = getCurrentRegentsTier();
       currentQuestionIsStrange = regentsTier === 'hardcore';
       currentAxisMode = {
-        flipX: regentsTier === 'hardcore',
-        flipY: regentsTier === 'normal' || regentsTier === 'hardcore'
+        flipX: regentsTier === 'hardcore' && Math.random() < 0.5,
+        flipY: regentsTier === 'hardcore' ? Math.random() < 0.5 : regentsTier === 'normal' ? Math.random() < 0.5 : false
       };
       currentQuestionMode = questionModes[Math.floor(Math.random() * questionModes.length)];
       currentCorrectAnswer = getCorrectAnswer();
@@ -1314,6 +1395,7 @@
 
     function getCorrectAnswer() {
       if (currentQuestionMode === 'directionChange') return getDirectionAnswer();
+      if (current.type === 'nonlinear proportional') return 'proportional';
       return current.type;
     }
 
@@ -1567,35 +1649,40 @@
       updateOrbitonHud();
       themeGrid.innerHTML = '';
 
+      const upgradeLabels = {
+        shield:    { name: 'Evade',       preview: key => `Miss penalty −${Math.round(getShieldReduction() * 100)}%` },
+        bonus:     { name: 'Streak+',     preview: key => `Multiplier +${getStreakStep().toFixed(1)}/streak` },
+        tankDelay: { name: 'Tank Delay',  preview: key => `Delay ${(getTankDelayMs() / 1000).toFixed(1)}s` },
+        hedgeFund: { name: 'Slow Drain',  preview: key => `Drain +${Math.round((getEffectiveTankDrainDurationMs() / rewardDrainDurationMs - 1) * 100)}% slower` },
+        bottomLine:{ name: 'Floor',       preview: key => `Min pts +${getBottomLineBonus()}` },
+      };
+
       Object.entries(upgradeItems).forEach(([key, item]) => {
         if (key === 'regentsMode') return;
         const priceValue = getUpgradePrice(key);
+        const label = upgradeLabels[key] || { name: item.name, preview: () => item.preview };
 
         const card = document.createElement('div');
         card.className = 'themeCard';
 
         const name = document.createElement('div');
         name.className = 'themeName';
-        name.textContent = item.name;
+        name.textContent = label.name;
         card.appendChild(name);
 
         const preview = document.createElement('div');
         preview.className = 'themePreview';
-        preview.textContent = key === 'shield' ? `${item.preview} | Current block: ${Math.round(getShieldReduction() * 100)}%` :
-          key === 'bonus' ? `${item.preview} | Current step: +${getStreakStep().toFixed(1)}` :
-            key === 'tankDelay' ? `${item.preview} | Current delay: ${(getTankDelayMs() / 1000).toFixed(1)}s` :
-              key === 'hedgeFund' ? `${item.preview} | Current slowdown: +${Math.round((getEffectiveTankDrainDurationMs() / rewardDrainDurationMs - 1) * 100)}%` :
-                `${item.preview} | Current minimum boost: +${getBottomLineBonus()}`;
+        preview.textContent = label.preview(key);
         card.appendChild(preview);
 
         const status = document.createElement('div');
         status.className = 'themeStatus';
-        status.textContent = `Level ${item.level}`;
+        status.textContent = `Lv ${item.level}`;
         card.appendChild(status);
 
         const action = document.createElement('button');
         action.className = 'themeAction';
-        action.textContent = `Upgrade (${priceValue.toLocaleString()} ⟲)`;
+        action.textContent = `↑ ${priceValue.toLocaleString()} ⟲`;
         action.disabled = orbiton < priceValue;
         action.addEventListener('click', () => buyUpgrade(key));
         card.appendChild(action);
@@ -1605,28 +1692,28 @@
 
       const shieldPrice = getStreakShieldPrice();
       addRegentsTierCard(
-        'Streak Shield',
+        'Shield',
         'Blocks one streak loss',
-        `Owned: ${streakShields}`,
-        `Buy (${shieldPrice.toLocaleString()} ⟲)`,
+        `×${streakShields}`,
+        `+ ${shieldPrice.toLocaleString()} ⟲`,
         () => buyStreakShield(),
         orbiton < shieldPrice
       );
 
       addRegentsTierCard(
-        'Normal Regents Mode',
-        'Vertical axis flipping',
-        getRegentsStoreStatus('normal'),
+        '↕ Normal Regents',
+        'Y-axis flips',
+        getRegentsStoreStatus('normal') || '—',
         'Unavailable',
         null,
         true
       );
 
       addRegentsTierCard(
-        'Hardcore Regents Mode',
-        'Vertical + horizontal axis flipping',
-        getRegentsStoreStatus('hardcore'),
-        isHardcoreAvailable() ? (upgradeItems.regentsMode.enabled ? 'Turn Off' : 'Turn On') : 'Unavailable',
+        '↕↔ Hardcore Regents',
+        'X+Y axis flip',
+        getRegentsStoreStatus('hardcore') || '—',
+        isHardcoreAvailable() ? (upgradeItems.regentsMode.enabled ? 'Off' : 'On') : 'Unavailable',
         isHardcoreAvailable() ? (() => toggleRegentsMode()) : null,
         !isHardcoreAvailable()
       );
@@ -1647,17 +1734,17 @@
 
         const status = document.createElement('div');
         status.className = 'themeStatus';
-        status.textContent = currentGlyphThemeKey === themeKey ? 'equipped' : (theme.owned ? 'owned' : 'locked');
+        status.textContent = currentGlyphThemeKey === themeKey ? '' : (theme.owned ? 'owned' : '🔒');
         card.appendChild(status);
 
         const action = document.createElement('button');
         action.className = 'themeAction';
         if (!theme.owned) {
-          action.textContent = `Buy (${theme.price.toLocaleString()} ⟲)`;
+          action.textContent = `${theme.price.toLocaleString()} ⟲`;
           action.disabled = orbiton < theme.price;
           action.addEventListener('click', () => buyTheme(themeKey));
         } else if (currentGlyphThemeKey === themeKey) {
-          action.textContent = 'Equipped';
+          action.textContent = '✓ On';
           action.disabled = true;
         } else {
           action.textContent = 'Equip';
@@ -1674,22 +1761,22 @@
 
         const unlockName = document.createElement('div');
         unlockName.className = 'themeName';
-        unlockName.textContent = 'THREE-OPTION Unlock';
+        unlockName.textContent = '3-Option Mode';
         unlockCard.appendChild(unlockName);
 
         const unlockPreview = document.createElement('div');
         unlockPreview.className = 'themePreview';
-        unlockPreview.textContent = 'Reduce relationship answers from 4 to 3 options permanently.';
+        unlockPreview.textContent = '4→3 answer choices';
         unlockCard.appendChild(unlockPreview);
 
         const unlockStatus = document.createElement('div');
         unlockStatus.className = 'themeStatus';
-        unlockStatus.textContent = 'locked';
+        unlockStatus.textContent = '🔒';
         unlockCard.appendChild(unlockStatus);
 
         const unlockAction = document.createElement('button');
         unlockAction.className = 'themeAction';
-        unlockAction.textContent = `Buy (${threeOptionUnlockPrice.toLocaleString()} ⟲)`;
+        unlockAction.textContent = `${threeOptionUnlockPrice.toLocaleString()} ⟲`;
         unlockAction.disabled = orbiton < threeOptionUnlockPrice;
         unlockAction.addEventListener('click', buyThreeOptionUnlock);
         unlockCard.appendChild(unlockAction);
@@ -1699,7 +1786,10 @@
     }
 
     function renderTitle() {
-      chartTitle.textContent = '';
+      const xMeta = variableMap[current.x];
+      const yMeta = variableMap[current.y];
+      chartTitle.textContent = `${yMeta.label} vs. ${xMeta.label}`;
+      chartTitle.style.background = getGraphBackgroundColor();
     }
 
     function renderQuestion() {
@@ -1758,6 +1848,7 @@
         const reward = currentQuestionRewardEligible ? getTankOrbitonReward() : 0;
         if (currentQuestionRewardEligible) {
           correctStreak += 1;
+          peakStreak = Math.max(peakStreak, correctStreak);
           orbiton += reward;
           advanceGlyphPalette();
         }
@@ -1802,249 +1893,134 @@
       }
     }
 
-    function makeSVG(tag, attrs = {}, text = '') {
-      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-      for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
-      if (text) el.textContent = text;
-      return el;
-    }
 
-    function measureSvgTextWidth(svg, text, fontSize, fontWeight = '700') {
-      const temp = makeSVG('text', {
-        x: -9999,
-        y: -9999,
-        'text-anchor': 'start',
-        'font-size': fontSize,
-        'font-weight': fontWeight,
-        fill: '#111827',
-        visibility: 'hidden'
-      }, text);
-      svg.appendChild(temp);
-      const width = temp.getBBox().width;
-      svg.removeChild(temp);
-      return width;
-    }
-
-    function wrapWordsForSvg(svg, text, maxWidth, fontSize) {
-      const words = text.split(/\s+/);
+    function wrapText(text, maxChars) {
+      const words = text.split(' ');
       const lines = [];
-      let current = '';
-
+      let line = '';
       for (const word of words) {
-        const candidate = current ? `${current} ${word}` : word;
-        const candidateWidth = measureSvgTextWidth(svg, candidate, fontSize);
-        if (!current || candidateWidth <= maxWidth) {
-          current = candidate;
+        if (line && (line + ' ' + word).length > maxChars) {
+          lines.push(line);
+          line = word;
         } else {
-          lines.push(current);
-          current = word;
+          line = line ? line + ' ' + word : word;
         }
       }
-
-      if (current) lines.push(current);
-      return lines;
-    }
-
-    function addSmartXAxisLabel(svg, label, unit, x, y, W, maxWidth, preferTop) {
-      const textEl = makeSVG('text', {
-        x,
-        y,
-        'text-anchor': 'middle',
-        'font-size': 18,
-        'font-weight': '700',
-        fill: '#111827'
-      }, `${label} (${unit})`);
-
-      svg.appendChild(textEl);
-      const bbox = textEl.getBBox();
-      const overflow = bbox.x < 4 || (bbox.x + bbox.width) > (W - 4) || bbox.width > maxWidth;
-
-      if (overflow) {
-        textEl.textContent = '';
-        textEl.setAttribute('font-size', '16');
-        const line1Y = preferTop ? y : y - 8;
-        const line2Y = preferTop ? y + 16 : y + 10;
-        const t1 = makeSVG('tspan', { x, y: line1Y }, label);
-        const t2 = makeSVG('tspan', { x, y: line2Y, 'font-size': 15 }, `(${unit})`);
-        textEl.appendChild(t1);
-        textEl.appendChild(t2);
-      }
-    }
-
-    function addSmartGraphTitle(svg, title, x, y, maxWidth) {
-      const wrapped = wrapWordsForSvg(svg, title, maxWidth, 16).slice(0, 3);
-      const multiLine = wrapped.length > 1;
-      const fontSize = multiLine ? 15 : 16;
-      const lineGap = multiLine ? 22 : 18;
-      const startY = y - ((wrapped.length - 1) * lineGap) / 2;
-
-      wrapped.forEach((line, idx) => {
-        svg.appendChild(makeSVG('text', {
-          x,
-          y: startY + idx * lineGap,
-          'text-anchor': 'middle',
-          'font-size': fontSize,
-          'font-weight': '700',
-          fill: '#111827'
-        }, line));
-      });
-    }
-
-    function addSmartYAxisLabel(svg, label, unit, x, y, maxWidth) {
-      const labelLines = wrapWordsForSvg(svg, label, maxWidth, 15);
-      const lines = [...labelLines, `(${unit})`];
-      const lineGap = 18;
-      const startY = y - ((lines.length - 1) * lineGap) / 2;
-      lines.forEach((line, idx) => {
-        const textEl = makeSVG('text', {
-          x,
-          y: startY + idx * lineGap,
-          'text-anchor': 'middle',
-          'font-size': 18,
-          'font-weight': '700',
-          fill: '#111827'
-        }, line);
-        svg.appendChild(textEl);
-      });
-    }
-
-    function addSmartYAxisLabelVertical(svg, label, unit, x, y, svgHeight, padding = 8) {
-      const heightLimit = Math.max(80, svgHeight - (padding * 2));
-      const minWidth = 64;
-      const step = 12;
-      const lineGap = 18;
-      function buildGroup(maxWidth) {
-        const labelLines = wrapWordsForSvg(svg, label, maxWidth, 15);
-        const lines = [...labelLines, `(${unit})`];
-        const startY = y - ((lines.length - 1) * lineGap) / 2;
-        const group = makeSVG('g', { transform: `rotate(-90 ${x} ${y})` });
-        lines.forEach((line, idx) => {
-          const textEl = makeSVG('text', {
-            x,
-            y: startY + idx * lineGap,
-            'text-anchor': 'middle',
-            'font-size': 18,
-            'font-weight': '700',
-            fill: '#111827'
-          }, line);
-          group.appendChild(textEl);
-        });
-        return group;
-      }
-      let chosenGroup = null;
-      let maxWidth = heightLimit;
-      while (maxWidth >= minWidth) {
-        const testGroup = buildGroup(maxWidth);
-        svg.appendChild(testGroup);
-        const bbox = testGroup.getBBox();
-        if (bbox.height <= heightLimit && bbox.y >= padding && (bbox.y + bbox.height) <= (svgHeight - padding)) {
-          chosenGroup = testGroup;
-          break;
-        }
-        svg.removeChild(testGroup);
-        maxWidth -= step;
-      }
-      if (!chosenGroup) {
-        chosenGroup = buildGroup(minWidth);
-        svg.appendChild(chosenGroup);
-      }
+      if (line) lines.push(line);
+      return lines.join('<br>');
     }
 
     function renderChart() {
-      svg.innerHTML = '';
-
-      const W = 780;
-      const H = 500;
-      const m = {
-        top: currentAxisMode.flipY ? 104 : 64,
-        right: 32,
-        bottom: currentAxisMode.flipY ? 40 : 60,
-        left: 118
-      };
-      const plotW = W - m.left - m.right;
-      const plotH = H - m.top - m.bottom;
       const [xmin, xmax] = current.xRange;
       const [ymin, ymax] = current.yRange;
       const xMeta = variableMap[current.x];
       const yMeta = variableMap[current.y];
 
-      const xScaleStandard = x => m.left + ((x - xmin) / (xmax - xmin)) * plotW;
-      const xScaleFlipped = x => m.left + plotW - ((x - xmin) / (xmax - xmin)) * plotW;
-      const xScale = currentAxisMode.flipX ? xScaleFlipped : xScaleStandard;
-      const yScaleStandard = y => m.top + plotH - ((y - ymin) / (ymax - ymin)) * plotH;
-      const yScaleFlipped = y => m.top + ((y - ymin) / (ymax - ymin)) * plotH;
-      const yScale = currentAxisMode.flipY ? yScaleFlipped : yScaleStandard;
+      const divW = chartDiv.getBoundingClientRect().width || 600;
+      const isNarrow = divW < 480;
+      const isMid    = divW < 640;
 
-      const xAxisY = currentAxisMode.flipY ? m.top : m.top + plotH;
-      const xTickLabelY = currentAxisMode.flipY ? m.top - 10 : m.top + plotH + 24;
-      const xTickY2 = currentAxisMode.flipY ? m.top - 7 : m.top + plotH + 7;
+      // Scale font sizes down on small screens so labels fit without overflow.
+      const tickFontSize  = isNarrow ? 16 : isMid ? 18 : 20;
+      const labelFontSize = isNarrow ? 18 : isMid ? 20 : 22;
+      const titleFontSize = isNarrow ? 20 : isMid ? 22 : 24;
+      const tickCount     = isNarrow ? 6  : isMid ? 10 : 16;
+      const titleMaxChars = isNarrow ? 35 : isMid ? 48 : 60;
+      const yLabelMaxChars = isNarrow ? 14 : 20;
 
-      svg.appendChild(makeSVG('rect', { x: 0, y: 0, width: W, height: H, fill: getGraphBackgroundColor() }));
-      addSmartGraphTitle(svg, `${yMeta.label} (${yMeta.unit}) vs. ${xMeta.label} (${xMeta.unit})`, W / 2, 28, W - 40);
-
-      for (let i = 0; i <= 10; i++) {
-        const xVal = xmin + (i / 10) * (xmax - xmin);
-        const xPix = xScale(xVal);
-        svg.appendChild(makeSVG('line', { x1: xPix, y1: m.top, x2: xPix, y2: m.top + plotH, stroke: '#ececf2', 'stroke-width': 1 }));
+      // Compute dtick explicitly so Plotly always uses exactly tickCount intervals.
+      // nticks is only a hint and Plotly overrides it for "nice" ranges — dtick is exact.
+      function calcDtick(min, max, count) {
+        const raw = (max - min) / count;
+        const magnitude = Math.pow(10, Math.floor(Math.log10(raw)));
+        const nice = [1, 2, 2.5, 5, 10].find(f => f * magnitude >= raw) || 10;
+        return nice * magnitude;
       }
+      // For nonlinear graphs, extend both axes to include the origin so the
+      // curve's relationship to (0,0) is always visible.
+      const isNonlinear = current.type === 'nonlinear';
+      const xRangeMin = isNonlinear ? Math.min(0, xmin) : xmin;
+      const xRangeMax = isNonlinear ? Math.max(0, xmax) : xmax;
+      const yRangeMin = isNonlinear ? Math.min(0, ymin) : ymin;
+      const yRangeMax = isNonlinear ? Math.max(0, ymax) : ymax;
 
-      for (let i = 0; i <= 10; i++) {
-        const yVal = ymin + (i / 10) * (ymax - ymin);
-        const yPix = yScale(yVal);
-        svg.appendChild(makeSVG('line', { x1: m.left, y1: yPix, x2: m.left + plotW, y2: yPix, stroke: '#ececf2', 'stroke-width': 1 }));
-      }
+      const xDtick = calcDtick(xRangeMin, xRangeMax, tickCount);
+      // For y, derive max tick count from pixel height so labels never crowd.
+      // Each label needs roughly 2× the font size in pixels of clearance.
+      const chartH = chartDiv.getBoundingClientRect().height || 300;
+      const yTickCount = Math.floor(chartH / (tickFontSize * 2.5));
+      const yDtick = calcDtick(yRangeMin, yRangeMax, yTickCount);
 
-      svg.appendChild(makeSVG('line', { x1: m.left, y1: xAxisY, x2: m.left + plotW, y2: xAxisY, stroke: '#111827', 'stroke-width': 2.2 }));
-      svg.appendChild(makeSVG('line', { x1: m.left, y1: m.top, x2: m.left, y2: m.top + plotH, stroke: '#111827', 'stroke-width': 2.2 }));
-
-      for (let i = 0; i <= 10; i++) {
-        const xVal = xmin + (i / 10) * (xmax - xmin);
-        const xPix = xScale(xVal);
-        svg.appendChild(makeSVG('line', { x1: xPix, y1: xAxisY, x2: xPix, y2: xTickY2, stroke: '#111827', 'stroke-width': 1.8 }));
-        svg.appendChild(makeSVG('text', { x: xPix, y: xTickLabelY, 'text-anchor': 'middle', 'font-size': 13, fill: '#111827' }, tidyNumber(xVal)));
-      }
-
-      for (let i = 0; i <= 10; i++) {
-        const yVal = ymin + (i / 10) * (ymax - ymin);
-        const yPix = yScale(yVal);
-        svg.appendChild(makeSVG('line', { x1: m.left - 7, y1: yPix, x2: m.left, y2: yPix, stroke: '#111827', 'stroke-width': 1.8 }));
-        svg.appendChild(makeSVG('text', { x: m.left - 12, y: yPix + 4, 'text-anchor': 'end', 'font-size': 13, fill: '#111827' }, tidyNumber(yVal)));
-      }
-
-      const pathParts = [];
-      const points = [];
       const steps = 180;
+      const xs = [], ys = [];
       for (let i = 0; i <= steps; i++) {
         const x = xmin + (i / steps) * (xmax - xmin);
-        let y = current.fn(x);
-        y = Math.max(ymin, Math.min(ymax, y));
-        const px = xScale(x);
-        const py = yScale(y);
-        points.push([px, py]);
-        pathParts.push((i === 0 ? 'M' : 'L') + px + ' ' + py);
+        const y = Math.max(ymin, Math.min(ymax, current.fn(x)));
+        xs.push(x);
+        ys.push(y);
       }
 
-      svg.appendChild(makeSVG('path', {
-        d: pathParts.join(' '),
-        fill: 'none',
-        stroke: '#1d4ed8',
-        'stroke-width': 3.5,
-        'stroke-linejoin': 'round',
-        'stroke-linecap': 'round'
-      }));
+      const bgColor = getGraphBackgroundColor();
+      const tier = getCurrentRegentsTier();
+      const gridColor = tier === 'normal' ? '#88cc88' : tier === 'hardcore' ? '#cc8888' : '#ececf2';
 
-      for (let i = 0; i < points.length; i += 20) {
-        svg.appendChild(makeSVG('circle', { cx: points[i][0], cy: points[i][1], r: 4, fill: '#1d4ed8' }));
-      }
+      const trace = {
+        x: xs,
+        y: ys,
+        mode: 'lines+markers',
+        type: 'scatter',
+        line: { color: '#1d4ed8', width: 3 },
+        marker: { color: '#1d4ed8', size: 5, symbol: 'circle' },
+        hoverinfo: 'none'
+      };
 
-      const xAxisLabelY = currentAxisMode.flipY ? 70 : H - 18;
-      addSmartXAxisLabel(svg, xMeta.label, xMeta.unit, m.left + plotW / 2, xAxisLabelY, W, plotW - 20, currentAxisMode.flipY);
-      addSmartYAxisLabelVertical(svg, yMeta.label, yMeta.unit, 54, m.top + plotH / 2, H, 6);
-    }
+      const vt323 = "'VT323', 'Courier New', monospace";
 
-    function tidyNumber(n) {
-      if (Math.abs(n) >= 100 || Number.isInteger(n)) return String(Math.round(n));
-      return n.toFixed(1).replace(/\.0$/, '');
+      const layout = {
+        paper_bgcolor: bgColor,
+        plot_bgcolor: bgColor,
+        font: { family: vt323 },
+        margin: {
+          t: currentAxisMode.flipY ? 60 : 16,
+          r: 16,
+          b: 16,
+          l: 16,
+          autoexpand: true
+        },
+        xaxis: {
+          title: { text: `${xMeta.label} (${xMeta.unit})`, font: { family: vt323, size: labelFontSize, color: '#111827' }, standoff: 8 },
+          range: currentAxisMode.flipX ? [xRangeMax, xRangeMin] : [xRangeMin, xRangeMax],
+          showgrid: true, gridcolor: gridColor, gridwidth: 1,
+          zeroline: isNonlinear, zerolinecolor: '#111827', zerolinewidth: 2,
+          tickfont: { family: vt323, size: tickFontSize, color: '#111827' },
+          linecolor: '#111827', linewidth: 2, mirror: false,
+          tick0: xRangeMin, dtick: xDtick, tickformat: '~r',
+          ticks: 'outside', ticklen: 5, tickwidth: 1, tickcolor: '#111827',
+          side: currentAxisMode.flipY ? 'top' : 'bottom',
+          automargin: true
+        },
+        yaxis: {
+          title: { text: wrapText(`${yMeta.label} (${yMeta.unit})`, yLabelMaxChars), font: { family: vt323, size: labelFontSize, color: '#111827' }, standoff: 8 },
+          range: currentAxisMode.flipY ? [yRangeMax, yRangeMin] : [yRangeMin, yRangeMax],
+          showgrid: true, gridcolor: gridColor, gridwidth: 1,
+          zeroline: current.type === 'nonlinear', zerolinecolor: '#111827', zerolinewidth: 2,
+          tickfont: { family: vt323, size: tickFontSize, color: '#111827' },
+          linecolor: '#111827', linewidth: 2, mirror: false,
+          tick0: yRangeMin, dtick: yDtick, tickformat: '~r',
+          ticks: 'outside', ticklen: 5, tickwidth: 1, tickcolor: '#111827',
+          automargin: true
+        },
+        showlegend: false,
+        autosize: true
+      };
+
+      const config = {
+        staticPlot: true,
+        responsive: true,
+        displayModeBar: false
+      };
+
+      Plotly.react(chartDiv, [trace], layout, config);
     }
 
     // Unicode background
@@ -2201,10 +2177,16 @@
     }
 
     window.addEventListener('resize', resizeBg);
+    window.addEventListener('resize', () => { if (current) renderChart(); });
     shopButton.addEventListener('click', openShop);
     shopCloseButton.addEventListener('click', closeShop);
     shopOverlay.addEventListener('click', (e) => {
       if (e.target === shopOverlay) closeShop();
+    });
+    tutorialButton.addEventListener('click', openTutorial);
+    tutorialCloseButton.addEventListener('click', closeTutorial);
+    tutorialOverlay.addEventListener('click', (e) => {
+      if (e.target === tutorialOverlay) closeTutorial();
     });
     volumeDownButton.addEventListener('click', () => changeMasterVolume(-0.1));
     volumeUpButton.addEventListener('click', () => changeMasterVolume(0.1));
