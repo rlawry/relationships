@@ -1018,7 +1018,8 @@
       intro: 'intro.mp3',
       basic: 'main.mp3',
       normal: 'normal.mp3',
-      hardcore: 'hardcore.mp3'
+      hardcore: 'hardcore.mp3',
+      'long-term': 'long-term.mp3'
     };
     let musicAudioCtx = null;
     let musicMasterGain = null;
@@ -1033,6 +1034,8 @@
     let currentBackingKey = null;
     let pendingBackingKey = 'basic';
     let musicFadeToken = 0;
+    let hardcoreAlternating = false;
+    let hardcoreAltToken = 0;
     let audioMasterVolume = 0.55;
     const musicVolumeScale = 0.42;
     const sfxVolumeScale = 1.55;
@@ -1179,15 +1182,23 @@
       return 'basic';
     }
 
-    function crossfadeToBackingTrack(targetKey, duration = 900) {
+    function crossfadeToBackingTrack(targetKey, duration = 900, startAt = null) {
+      if (targetKey === 'hardcore') {
+        if (hardcoreAlternating && currentMusicSession && currentMusicSession.active) return;
+        stopHardcoreAlternating();
+        startHardcoreAlternating(startAt);
+        return;
+      }
+      if (hardcoreAlternating) stopHardcoreAlternating();
       const nextBuffer = musicBuffers.get(targetKey);
       if (!nextBuffer) return;
       if (currentBackingKey === targetKey && currentMusicSession && currentMusicSession.active) return;
 
       const ctx = getMusicContext();
-      const startAt = ctx.currentTime + 0.03;
+      const scheduleAt = startAt !== null ? startAt : ctx.currentTime + 0.03;
+      const fadeMs = startAt !== null ? 0 : duration;
       const previousSession = currentMusicSession;
-      const nextSession = createLoopingMusicSession(targetKey, startAt, 1, duration);
+      const nextSession = createLoopingMusicSession(targetKey, scheduleAt, 1, fadeMs);
       if (!nextSession) return;
 
       currentMusicSession = nextSession;
@@ -1199,11 +1210,60 @@
       }
     }
 
+    function scheduleHardcoreAlternation(fromKey, token) {
+      if (token !== hardcoreAltToken || !hardcoreAlternating) return;
+      const buffer = musicBuffers.get(fromKey);
+      if (!buffer) return;
+      const toKey = fromKey === 'hardcore' ? 'long-term' : 'hardcore';
+      const delayMs = buffer.duration * 4 * 1000 - 900;
+      setTimeout(() => {
+        if (token !== hardcoreAltToken || !hardcoreAlternating) return;
+        if (getCurrentRegentsTier() !== 'hardcore') return;
+        const ctx = getMusicContext();
+        const scheduleAt = ctx.currentTime + 0.03;
+        const previousSession = currentMusicSession;
+        const nextSession = createLoopingMusicSession(toKey, scheduleAt, 1, 900);
+        if (!nextSession) return;
+        currentMusicSession = nextSession;
+        currentBackingKey = toKey;
+        if (previousSession && previousSession !== nextSession) {
+          fadeOutAndDisposeMusicSession(previousSession, 900);
+        }
+        scheduleHardcoreAlternation(toKey, token);
+      }, delayMs);
+    }
+
+    function startHardcoreAlternating(startAt = null) {
+      hardcoreAltToken += 1;
+      hardcoreAlternating = true;
+      const token = hardcoreAltToken;
+      const ctx = getMusicContext();
+      const scheduleAt = startAt !== null ? startAt : ctx.currentTime + 0.03;
+      const fadeMs = startAt !== null ? 0 : 900;
+      const previousSession = currentMusicSession;
+      const session = createLoopingMusicSession('hardcore', scheduleAt, 1, fadeMs);
+      if (!session) return;
+      currentMusicSession = session;
+      currentBackingKey = 'hardcore';
+      pendingBackingKey = 'hardcore';
+      musicFadeToken += 1;
+      if (previousSession && previousSession !== session) {
+        fadeOutAndDisposeMusicSession(previousSession, 900);
+      }
+      scheduleHardcoreAlternation('hardcore', token);
+    }
+
+    function stopHardcoreAlternating() {
+      hardcoreAltToken += 1;
+      hardcoreAlternating = false;
+    }
+
     function syncBackingMusicToRegentsMode(force = false) {
       if (!backgroundMusicStarted) return;
       const targetKey = getBackingTrackKeyForTier();
       pendingBackingKey = targetKey;
       if (!introFinished) return;
+      if (!force && targetKey === 'hardcore' && hardcoreAlternating && currentMusicSession && currentMusicSession.active) return;
       if (!force && currentBackingKey === targetKey && currentMusicSession && currentMusicSession.active) return;
       crossfadeToBackingTrack(targetKey);
     }
@@ -1258,9 +1318,13 @@
       introBridgeTimer = setTimeout(() => {
         introFinished = true;
         const targetKey = pendingBackingKey || 'basic';
-        if (currentBackingKey === targetKey && currentMusicSession && currentMusicSession.active) return;
-        currentMusicSession = createLoopingMusicSession(targetKey, introEndAt, 1, 0);
-        currentBackingKey = targetKey;
+        if (targetKey === 'hardcore') {
+          startHardcoreAlternating(introEndAt);
+        } else {
+          if (currentBackingKey === targetKey && currentMusicSession && currentMusicSession.active) return;
+          currentMusicSession = createLoopingMusicSession(targetKey, introEndAt, 1, 0);
+          currentBackingKey = targetKey;
+        }
       }, bridgeDelayMs);
     }
 
