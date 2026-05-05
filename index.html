@@ -259,6 +259,33 @@
       box-shadow: 0 0 16px rgba(255, 140, 164, 0.32);
     }
 
+    .optionBtn.eliminated {
+      position: relative;
+      opacity: 0.45;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .optionBtn.eliminated::before,
+    .optionBtn.eliminated::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 85%;
+      height: 3px;
+      background: #ff3b3b;
+      border-radius: 2px;
+    }
+
+    .optionBtn.eliminated::before {
+      transform: rotate(20deg);
+    }
+
+    .optionBtn.eliminated::after {
+      transform: rotate(-20deg);
+    }
+
     .statusBar {
       display: flex;
       flex-wrap: wrap;
@@ -980,6 +1007,13 @@
         growth: 2,
         preview: 'Raises the minimum points'
       },
+      turtle: {
+        name: 'Turtle',
+        level: 0,
+        basePrice: 1500,
+        growth: 3,
+        preview: 'Reduces tank drain speed by 15% per level'
+      },
       regentsMode: {
         name: 'Hardcore Regents Mode',
         level: 1,
@@ -1559,8 +1593,12 @@
       return baseTankDelayMs + (upgradeItems.tankDelay.level * 100);
     }
 
+    function getTurtleDrainMultiplier() {
+      return Math.pow(1 / 0.85, upgradeItems.turtle.level);
+    }
+
     function getEffectiveTankDrainDurationMs() {
-      return rewardDrainDurationMs;
+      return rewardDrainDurationMs * getTurtleDrainMultiplier();
     }
 
     function getHedgeFundMinMultiplier() {
@@ -1726,6 +1764,7 @@
         tankDelay: { name: 'Tank Delay',  preview: key => `Delay ${(getTankDelayMs() / 1000).toFixed(1)}s` },
         hedgeFund: { name: 'Hedge Fund',  preview: key => `Min reward ×${getHedgeFundMinMultiplier().toFixed(1)} (+${Math.round((getHedgeFundMinMultiplier() - 1) * 100)}%)` },
         bottomLine:{ name: 'Floor',       preview: key => `Min pts +${getBottomLineBonus()}` },
+        turtle:    { name: 'Turtle',      preview: key => `Drain speed −${Math.round((1 - 1 / getTurtleDrainMultiplier()) * 100)}%` },
       };
 
       Object.entries(upgradeItems).forEach(([key, item]) => {
@@ -1837,7 +1876,7 @@
 
         const unlockPreview = document.createElement('div');
         unlockPreview.className = 'themePreview';
-        unlockPreview.textContent = '4→3 answer choices';
+        unlockPreview.textContent = 'Eliminates 1 wrong answer choice';
         unlockCard.appendChild(unlockPreview);
 
         const unlockStatus = document.createElement('div');
@@ -1875,22 +1914,32 @@
 
     function getOptionsForCurrentQuestion() {
       if (currentQuestionMode === 'directionChange') return directionOptions;
-      if (!reducedRelationshipOptionsUnlocked) return relationshipOptions;
-
-      const correct = getCorrectAnswer();
-      const distractors = shuffleArray(relationshipOptions.filter(opt => opt !== correct)).slice(0, 2);
-      return shuffleArray([correct, ...distractors]);
+      return shuffleArray([...relationshipOptions]);
     }
 
     function renderOptions() {
       optionsBox.innerHTML = '';
       optionsBox.className = 'options ' + (currentQuestionMode === 'directionChange' ? 'direction-mode' : 'relationship-mode');
-      getOptionsForCurrentQuestion().forEach(opt => {
+      const opts = getOptionsForCurrentQuestion();
+
+      let eliminatedOpt = null;
+      if (reducedRelationshipOptionsUnlocked && currentQuestionMode !== 'directionChange') {
+        const correct = getCorrectAnswer();
+        const wrongOpts = opts.filter(o => o !== correct);
+        eliminatedOpt = wrongOpts[Math.floor(Math.random() * wrongOpts.length)];
+      }
+
+      opts.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'optionBtn';
         btn.textContent = opt;
         btn.dataset.value = opt;
-        btn.addEventListener('click', () => handleOptionClick(btn, opt));
+        if (opt === eliminatedOpt) {
+          btn.classList.add('eliminated');
+          btn.disabled = true;
+        } else {
+          btn.addEventListener('click', () => handleOptionClick(btn, opt));
+        }
         optionsBox.appendChild(btn);
       });
     }
