@@ -942,7 +942,7 @@
       qbasic: { name: 'QBasic Glyphs', price: 0, owned: true, preview: 'Æ Ω Ж ░ ◊ ✶', isEmoji: false, chars: [] },
       rockets: { name: 'Launch Bay', price: 450000, owned: false, preview: '🚀 🛰️ 🌌 🛸 ✨', isEmoji: true, chars: ['🚀', '🛰️', '🌌', '🛸', '✨', '🌠', '🔭', '🪐'] },
       geology: { name: 'Rock Vault', price: 6000000, owned: false, preview: '🪨 💎 🌋 🧭 ⛰️', isEmoji: true, chars: ['🪨', '💎', '🌋', '⛰️', '🧭', '🏔️', '🧱', '🗺️'] },
-      cats: { name: 'Cat Nebula', price: 100000000, owned: false, preview: '😺 😸 😻 🐈 🐈‍⬛', isEmoji: true, chars: ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾', '🐈', '🐈‍⬛'] }
+      cats: { name: 'Cat Nebula', price: 100000000, owned: false, preview: '😺 😸 😻 🐈 🐈‍⬛ (+10× reward)', isEmoji: true, chars: ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾', '🐈', '🐈‍⬛'] }
     };
     const upgradeItems = {
       shield: {
@@ -971,7 +971,7 @@
         level: 0,
         basePrice: 12000,
         growth: 3,
-        preview: 'Slows the tank drop a little each time you buy it'
+        preview: 'Increases the minimum reward by 20% per level'
       },
       bottomLine: {
         name: 'Bottom Line',
@@ -1000,7 +1000,7 @@
     ];
     let activeGlyphColorIndex = 0;
     const rewardDrainDurationMs = 4200;
-    const baseTankDelayMs = 600;
+    const baseTankDelayMs = 900;
     let rewardTankStartedAt = 0;
     let rewardTankRatio = 1;
     let rewardTankLocked = false;
@@ -1355,7 +1355,7 @@
     function startRewardTank() {
       const nextStreak = correctStreak + 1;
       const baseMaxReward = getOrbitonReward(nextStreak);
-      const baseMinReward = Math.min(baseMaxReward, Math.max(25, Math.round(baseMaxReward * 0.22)) + getBottomLineBonus());
+      const baseMinReward = Math.min(baseMaxReward, Math.round((Math.max(25, Math.round(baseMaxReward * 0.22)) + getBottomLineBonus()) * getHedgeFundMinMultiplier()));
       const strangeMultiplier = currentQuestionIsStrange ? 20 : 1;
       currentQuestionMaxReward = baseMaxReward * strangeMultiplier;
       currentQuestionMinReward = Math.min(currentQuestionMaxReward, baseMinReward * strangeMultiplier);
@@ -1508,7 +1508,9 @@
 
     function getGlyphSprite(char, role, colorIndex) {
       const theme = currentGlyphTheme();
-      const key = `${currentGlyphThemeKey}|${cell}|${role}|${colorIndex}|${char}`;
+      const key = theme.isEmoji
+        ? `${currentGlyphThemeKey}|${cell}|${char}`
+        : `${currentGlyphThemeKey}|${cell}|${role}|${colorIndex}|${char}`;
       if (glyphSpriteCache.has(key)) return glyphSpriteCache.get(key);
 
       const size = Math.ceil(cell * 2.4);
@@ -1558,7 +1560,11 @@
     }
 
     function getEffectiveTankDrainDurationMs() {
-      return Math.round(rewardDrainDurationMs * (1 + (upgradeItems.hedgeFund.level * 0.08)));
+      return rewardDrainDurationMs;
+    }
+
+    function getHedgeFundMinMultiplier() {
+      return 1 + (upgradeItems.hedgeFund.level * 0.20);
     }
 
     function getBottomLineBonus() {
@@ -1613,7 +1619,8 @@
     }
 
     function getOrbitonReward(streak) {
-      return Math.round(100 * (1 + Math.max(0, streak - 1) * getStreakStep()));
+      const catBonus = glyphThemes.cats.owned ? 10 : 1;
+      return Math.round(100 * (1 + Math.max(0, streak - 1) * getStreakStep()) * catBonus);
     }
 
     function buyUpgrade(key) {
@@ -1717,7 +1724,7 @@
         shield:    { name: 'Evade',       preview: key => `Miss penalty −${Math.round(getShieldReduction() * 100)}%` },
         bonus:     { name: 'Streak+',     preview: key => `Multiplier +${getStreakStep().toFixed(1)}/streak` },
         tankDelay: { name: 'Tank Delay',  preview: key => `Delay ${(getTankDelayMs() / 1000).toFixed(1)}s` },
-        hedgeFund: { name: 'Slow Drain',  preview: key => `Drain +${Math.round((getEffectiveTankDrainDurationMs() / rewardDrainDurationMs - 1) * 100)}% slower` },
+        hedgeFund: { name: 'Hedge Fund',  preview: key => `Min reward ×${getHedgeFundMinMultiplier().toFixed(1)} (+${Math.round((getHedgeFundMinMultiplier() - 1) * 100)}%)` },
         bottomLine:{ name: 'Floor',       preview: key => `Min pts +${getBottomLineBonus()}` },
       };
 
