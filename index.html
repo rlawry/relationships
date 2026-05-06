@@ -429,6 +429,17 @@
       }
     }
 
+    @keyframes targetFlash {
+      0%, 100% { stroke-opacity: 1; }
+      50%       { stroke-opacity: 0.12; }
+    }
+
+    #chart.target-active .zl {
+      stroke: #ff3333 !important;
+      stroke-width: 3px !important;
+      animation: targetFlash 1.1s ease-in-out infinite;
+    }
+
     .themeGrid {
       display: flex;
       flex-direction: column;
@@ -471,6 +482,35 @@
     .themeName {
       font-size: 22px;
       margin-bottom: 0;
+    }
+
+    .themeName[data-tooltip] {
+      cursor: help;
+      position: relative;
+    }
+
+    .themeName[data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 0;
+      top: calc(100% + 6px);
+      width: 260px;
+      background: rgba(14, 6, 28, 0.97);
+      color: rgba(244, 236, 255, 0.88);
+      font-size: 15px;
+      line-height: 1.5;
+      padding: 8px 12px;
+      border-radius: 7px;
+      border: 1px solid rgba(178, 108, 255, 0.35);
+      white-space: normal;
+      z-index: 200;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .themeName[data-tooltip]:hover::after {
+      opacity: 1;
     }
 
     .themePrice,
@@ -827,20 +867,20 @@
 
     const relationships = [
       // === LINEAR (NONPROPORTIONAL) — slopes all between 0.35–0.80, y-intercepts 20–75 ===
-      { x: 'seasonal_atmospheric_yield_coherence', y: 'thermal_crop_sync_phase', type: 'linear (nonproportional)', fn: x => 0.75 * x + 22, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'agroclimatic_flux_ratio', y: 'barometric_harvest_stability', type: 'linear (nonproportional)', fn: x => 0.40 * x + 55, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'carbon_loam_responsiveness', y: 'radiative_pasture_optimization', type: 'linear (nonproportional)', fn: x => 0.50 * x + 30, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'greenhouse_field_stability', y: 'agrothermal_vapor_loading', type: 'linear (nonproportional)', fn: x => 0.72 * x + 25, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'monsoon_nutrient_diffusion', y: 'pasture_heat_moderation', type: 'linear (nonproportional)', fn: x => 0.38 * x + 45, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'convective_yield_buffer', y: 'canopy_pressure_regulation', type: 'linear (nonproportional)', fn: x => 0.65 * x + 20, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'field_thermal_inertia', y: 'agrobaric_saturation_level', type: 'linear (nonproportional)', fn: x => 0.35 * x + 60, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'solar_mulch_absorption', y: 'climate_furrow_persistence', type: 'linear (nonproportional)', fn: x => 0.78 * x + 20, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'seasonal_loam_acceleration', y: 'rainfed_canopy_compression', type: 'linear (nonproportional)', fn: x => 0.45 * x + 42, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'ozone_areal_drift_density', y: 'ammonia_thermal_volume_loading', type: 'linear (nonproportional)', fn: x => 0.55 * x + 30, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'nitrogen_dioxide_radiant_surface_dose', y: 'hydrogen_sulfide_pressure_temperature_loading', type: 'linear (nonproportional)', fn: x => 0.62 * x + 28, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'oxygen_thermal_linear_molar_index', y: 'ammonia_pressure_surface_mass_load', type: 'linear (nonproportional)', fn: x => 0.38 * x + 55, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'carbon_dioxide_thermal_time_molar_drift', y: 'hydrogen_peroxide_pressure_time_ratio', type: 'linear (nonproportional)', fn: x => 0.78 * x + 20, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'sulfate_thermal_areal_mole_register', y: 'methane_pressure_length_time_coefficient', type: 'linear (nonproportional)', fn: x => 0.42 * x + 50, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'seasonal_atmospheric_yield_coherence', y: 'thermal_crop_sync_phase', type: 'positive linear (nonproportional)', fn: x => 0.75 * x + 22, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'agroclimatic_flux_ratio', y: 'barometric_harvest_stability', type: 'positive linear (nonproportional)', fn: x => 0.40 * x + 55, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'carbon_loam_responsiveness', y: 'radiative_pasture_optimization', type: 'positive linear (nonproportional)', fn: x => 0.50 * x + 30, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'greenhouse_field_stability', y: 'agrothermal_vapor_loading', type: 'positive linear (nonproportional)', fn: x => 0.72 * x + 25, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'monsoon_nutrient_diffusion', y: 'pasture_heat_moderation', type: 'positive linear (nonproportional)', fn: x => 0.38 * x + 45, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'convective_yield_buffer', y: 'canopy_pressure_regulation', type: 'positive linear (nonproportional)', fn: x => 0.65 * x + 20, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'field_thermal_inertia', y: 'agrobaric_saturation_level', type: 'positive linear (nonproportional)', fn: x => 0.35 * x + 60, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'solar_mulch_absorption', y: 'climate_furrow_persistence', type: 'positive linear (nonproportional)', fn: x => 0.78 * x + 20, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'seasonal_loam_acceleration', y: 'rainfed_canopy_compression', type: 'positive linear (nonproportional)', fn: x => 0.45 * x + 42, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'ozone_areal_drift_density', y: 'ammonia_thermal_volume_loading', type: 'positive linear (nonproportional)', fn: x => 0.55 * x + 30, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'nitrogen_dioxide_radiant_surface_dose', y: 'hydrogen_sulfide_pressure_temperature_loading', type: 'positive linear (nonproportional)', fn: x => 0.62 * x + 28, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'oxygen_thermal_linear_molar_index', y: 'ammonia_pressure_surface_mass_load', type: 'positive linear (nonproportional)', fn: x => 0.38 * x + 55, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'carbon_dioxide_thermal_time_molar_drift', y: 'hydrogen_peroxide_pressure_time_ratio', type: 'positive linear (nonproportional)', fn: x => 0.78 * x + 20, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'sulfate_thermal_areal_mole_register', y: 'methane_pressure_length_time_coefficient', type: 'positive linear (nonproportional)', fn: x => 0.42 * x + 50, xRange: [0, 100], yRange: [0, 100] },
 
       // === PROPORTIONAL — varied slopes (must pass through origin) ===
       // steep: nearly 1:1
@@ -873,20 +913,20 @@
       { x: 'methane_pressure_length_time_coefficient', y: 'oxygen_thermal_time_density_burden', type: 'proportional', fn: x => 0.38 * x, xRange: [0, 100], yRange: [0, 100] },
 
       // === NEGATIVE LINEAR — slopes all between 0.35–0.90 so line is unambiguously straight ===
-      { x: 'vapor_root_efficiency_score', y: 'solar_moisture_alignment_factor', type: 'negative linear/opposite', fn: x => -0.88 * x + 95, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'photosynthetic_rainfall_coupling', y: 'seasonal_evapotranspiration_harmony', type: 'negative linear/opposite', fn: x => -0.42 * x + 80, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'humidity_nutrient_transfer_rate', y: 'windborne_pollination_efficiency', type: 'negative linear/opposite', fn: x => -0.55 * x + 72, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'dewpoint_grain_conversion', y: 'insolation_furrow_efficiency', type: 'negative linear/opposite', fn: x => -0.75 * x + 85, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'crop_boundary_layer_utilization', y: 'hydrologic_tiller_response', type: 'negative linear/opposite', fn: x => -0.38 * x + 65, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'soil_moisture_resonance', y: 'latent_harvest_transfer', type: 'negative linear/opposite', fn: x => -0.50 * x + 75, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'root_zone_cloud_coupling', y: 'diurnal_fertility_modulation', type: 'negative linear/opposite', fn: x => -0.65 * x + 78, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'biomass_dew_retention', y: 'transpiration_gradient_efficiency', type: 'negative linear/opposite', fn: x => -0.45 * x + 88, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'methane_pasture_balance', y: 'agronomic_jetstream_utilization', type: 'negative linear/opposite', fn: x => -0.60 * x + 82, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'carbon_dioxide_pressure_area_ratio', y: 'methane_linear_time_burden', type: 'negative linear/opposite', fn: x => -0.90 * x + 95, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'sulfur_dioxide_thermal_density_gradient', y: 'carbon_dioxide_area_time_molar_spread', type: 'negative linear/opposite', fn: x => -0.48 * x + 70, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'methanol_radiant_molar_density', y: 'nitrate_accelerative_linear_mass_index', type: 'negative linear/opposite', fn: x => -0.40 * x + 62, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'ethane_thermal_linear_mass_density', y: 'ammonium_radiative_surface_flux', type: 'negative linear/opposite', fn: x => -0.82 * x + 90, xRange: [0, 100], yRange: [0, 100] },
-      { x: 'oxygen_thermal_time_density_burden', y: 'glucose_thermal_time_acceleration_load', type: 'negative linear/opposite', fn: x => -0.35 * x + 68, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'vapor_root_efficiency_score', y: 'solar_moisture_alignment_factor', type: 'negative linear/opposite (nonproportional)', fn: x => -0.88 * x + 95, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'photosynthetic_rainfall_coupling', y: 'seasonal_evapotranspiration_harmony', type: 'negative linear/opposite (nonproportional)', fn: x => -0.42 * x + 80, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'humidity_nutrient_transfer_rate', y: 'windborne_pollination_efficiency', type: 'negative linear/opposite (nonproportional)', fn: x => -0.55 * x + 72, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'dewpoint_grain_conversion', y: 'insolation_furrow_efficiency', type: 'negative linear/opposite (nonproportional)', fn: x => -0.75 * x + 85, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'crop_boundary_layer_utilization', y: 'hydrologic_tiller_response', type: 'negative linear/opposite (nonproportional)', fn: x => -0.38 * x + 65, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'soil_moisture_resonance', y: 'latent_harvest_transfer', type: 'negative linear/opposite (nonproportional)', fn: x => -0.50 * x + 75, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'root_zone_cloud_coupling', y: 'diurnal_fertility_modulation', type: 'negative linear/opposite (nonproportional)', fn: x => -0.65 * x + 78, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'biomass_dew_retention', y: 'transpiration_gradient_efficiency', type: 'negative linear/opposite (nonproportional)', fn: x => -0.45 * x + 88, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'methane_pasture_balance', y: 'agronomic_jetstream_utilization', type: 'negative linear/opposite (nonproportional)', fn: x => -0.60 * x + 82, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'carbon_dioxide_pressure_area_ratio', y: 'methane_linear_time_burden', type: 'negative linear/opposite (nonproportional)', fn: x => -0.90 * x + 95, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'sulfur_dioxide_thermal_density_gradient', y: 'carbon_dioxide_area_time_molar_spread', type: 'negative linear/opposite (nonproportional)', fn: x => -0.48 * x + 70, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'methanol_radiant_molar_density', y: 'nitrate_accelerative_linear_mass_index', type: 'negative linear/opposite (nonproportional)', fn: x => -0.40 * x + 62, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'ethane_thermal_linear_mass_density', y: 'ammonium_radiative_surface_flux', type: 'negative linear/opposite (nonproportional)', fn: x => -0.82 * x + 90, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'oxygen_thermal_time_density_burden', y: 'glucose_thermal_time_acceleration_load', type: 'negative linear/opposite (nonproportional)', fn: x => -0.35 * x + 68, xRange: [0, 100], yRange: [0, 100] },
 
       // === NONLINEAR — varied curvature; through-origin ones tagged as 'nonlinear proportional' ===
       // cubic through origin — shoots up fast near the right
@@ -922,7 +962,7 @@
     ];
 
     const questionModes = ["relationshipType", "directionChange"];
-    const relationshipOptions = ["proportional", "linear (nonproportional)", "negative linear/opposite", "nonlinear"];
+    const relationshipOptions = ["proportional", "positive linear (nonproportional)", "negative linear/opposite (nonproportional)", "nonlinear"];
     const directionOptions = ["Increases", "Decreases"];
 
     const chartDiv = document.getElementById('chart');
@@ -964,12 +1004,15 @@
     const shopUnlockOrbiton = 1000;
     const threeOptionUnlockPrice = 500000;
     let reducedRelationshipOptionsUnlocked = false;
+    const targetUnlockPrice = 100000;
+    let targetUnlocked = false;
+    let targetActive = false;
     const orbitonToll = 130;
     const glyphThemes = {
       qbasic: { name: 'QBasic Glyphs', price: 0, owned: true, preview: 'Æ Ω Ж ░ ◊ ✶', isEmoji: false, chars: [] },
-      rockets: { name: 'Launch Bay', price: 450000, owned: false, preview: '🚀 🛰️ 🌌 🛸 ✨', isEmoji: true, chars: ['🚀', '🛰️', '🌌', '🛸', '✨', '🌠', '🔭', '🪐'] },
-      geology: { name: 'Rock Vault', price: 6000000, owned: false, preview: '🪨 💎 🌋 🧭 ⛰️', isEmoji: true, chars: ['🪨', '💎', '🌋', '⛰️', '🧭', '🏔️', '🧱', '🗺️'] },
-      cats: { name: 'Cat Nebula', price: 100000000, owned: false, preview: '😺 😸 😻 🐈 🐈‍⬛ (+10× reward)', isEmoji: true, chars: ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾', '🐈', '🐈‍⬛'] }
+      rockets: { name: 'Launch Bay', price: 450000, owned: false, preview: '🚀 🛰️ 🌌 🛸 ✨ (miss → 20% streak)', isEmoji: true, chars: ['🚀', '🛰️', '🌌', '🛸', '✨', '🌠', '🔭', '🪐'] },
+      geology: { name: 'Rock Vault', price: 6000000, owned: false, preview: '🪨 💎 🌋 🧭 ⛰️ (miss → 40% streak)', isEmoji: true, chars: ['🪨', '💎', '🌋', '⛰️', '🧭', '🏔️', '🧱', '🗺️'] },
+      cats: { name: 'Cat Nebula', price: 100000000, owned: false, preview: '😺 😸 😻 🐈 🐈‍⬛ (+10× reward, miss → 50% streak)', isEmoji: true, chars: ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾', '🐈', '🐈‍⬛'] }
     };
     const upgradeItems = {
       shield: {
@@ -991,7 +1034,7 @@
         level: 0,
         basePrice: 500,
         growth: 2,
-        preview: 'Adds 0.1 seconds before the tank starts falling'
+        preview: 'Each level adds 0.1s before the reward tank starts draining. Answer within that window to earn the full reward — the longer the delay, the more time you have.'
       },
       hedgeFund: {
         name: 'Hedge Fund',
@@ -1000,13 +1043,7 @@
         growth: 3,
         preview: 'Increases the minimum reward by 20% per level'
       },
-      bottomLine: {
-        name: 'Bottom Line',
-        level: 0,
-        basePrice: 500,
-        growth: 2,
-        preview: 'Raises the minimum points'
-      },
+
       turtle: {
         name: 'Turtle',
         level: 0,
@@ -1389,12 +1426,12 @@
     function startRewardTank() {
       const nextStreak = correctStreak + 1;
       const baseMaxReward = getOrbitonReward(nextStreak);
-      const baseMinReward = Math.min(baseMaxReward, Math.round((Math.max(25, Math.round(baseMaxReward * 0.22)) + getBottomLineBonus()) * getHedgeFundMinMultiplier()));
+      const baseMinReward = Math.min(baseMaxReward, Math.round(Math.max(25, Math.round(baseMaxReward * 0.22)) * getHedgeFundMinMultiplier()));
       const strangeMultiplier = currentQuestionIsStrange ? 20 : 1;
       currentQuestionMaxReward = baseMaxReward * strangeMultiplier;
       currentQuestionMinReward = Math.min(currentQuestionMaxReward, baseMinReward * strangeMultiplier);
       rewardTankStartedAt = performance.now();
-      rewardTankRatio = 1;
+      rewardTankRatio = targetActive ? 0.8 : 1;
       rewardTankLocked = false;
       updateRewardTankVisual();
     }
@@ -1488,7 +1525,7 @@
     }
 
     function getDirectionAnswer() {
-      return current.type === 'negative linear/opposite' ? 'Decreases' : 'Increases';
+      return current.type === 'negative linear/opposite (nonproportional)' ? 'Decreases' : 'Increases';
     }
 
     function getCorrectAnswer() {
@@ -1498,6 +1535,23 @@
     }
 
     function updateProgressUnlocks() {
+    }
+
+    function buyTarget() {
+      if (targetUnlocked || orbiton < targetUnlockPrice) return;
+      spendOrbitonInShop(targetUnlockPrice);
+      targetUnlocked = true;
+      targetActive = true;
+      updateOrbitonHud();
+      renderShop();
+      renderChart();
+    }
+
+    function toggleTarget() {
+      if (!targetUnlocked) return;
+      targetActive = !targetActive;
+      renderShop();
+      renderChart();
     }
 
     function buyThreeOptionUnlock() {
@@ -1538,6 +1592,12 @@
 
     function clearGlyphSpriteCache() {
       glyphSpriteCache.clear();
+    }
+
+    function prewarmGlyphSpriteCache() {
+      const theme = currentGlyphTheme();
+      if (!theme.isEmoji) return;
+      theme.chars.forEach(char => getGlyphSprite(char, 'head', 0));
     }
 
     function getGlyphSprite(char, role, colorIndex) {
@@ -1605,9 +1665,6 @@
       return 1 + (upgradeItems.hedgeFund.level * 0.20);
     }
 
-    function getBottomLineBonus() {
-      return upgradeItems.bottomLine.level * 10;
-    }
 
     function getStreakShieldPrice() {
       return Math.max(5000, Math.round(totalOrbitonSpent * 0.5));
@@ -1702,6 +1759,7 @@
     function equipTheme(themeKey) {
       currentGlyphThemeKey = themeKey;
       clearGlyphSpriteCache();
+      prewarmGlyphSpriteCache();
       initStreams();
       renderShop();
       setOrbitonNotice(`${glyphThemes[themeKey].name} equipped.`);
@@ -1763,7 +1821,7 @@
         bonus:     { name: 'Streak+',     preview: key => `Multiplier +${getStreakStep().toFixed(1)}/streak` },
         tankDelay: { name: 'Tank Delay',  preview: key => `Delay ${(getTankDelayMs() / 1000).toFixed(1)}s` },
         hedgeFund: { name: 'Hedge Fund',  preview: key => `Min reward ×${getHedgeFundMinMultiplier().toFixed(1)} (+${Math.round((getHedgeFundMinMultiplier() - 1) * 100)}%)` },
-        bottomLine:{ name: 'Floor',       preview: key => `Min pts +${getBottomLineBonus()}` },
+
         turtle:    { name: 'Turtle',      preview: key => `Drain speed −${Math.round((1 - 1 / getTurtleDrainMultiplier()) * 100)}%` },
       };
 
@@ -1778,6 +1836,7 @@
         const name = document.createElement('div');
         name.className = 'themeName';
         name.textContent = label.name;
+        if (item.preview) name.dataset.tooltip = item.preview;
         card.appendChild(name);
 
         const preview = document.createElement('div');
@@ -1865,6 +1924,43 @@
         themeGrid.appendChild(card);
       });
 
+      {
+        const targetCard = document.createElement('div');
+        targetCard.className = 'themeCard';
+
+        const targetName = document.createElement('div');
+        targetName.className = 'themeName';
+        targetName.textContent = 'Target';
+        targetName.dataset.tooltip = 'Flashes the x = 0 and y = 0 axes so the origin is always easy to read. While active, the reward tank starts 20% lower.';
+        targetCard.appendChild(targetName);
+
+        const targetPreview = document.createElement('div');
+        targetPreview.className = 'themePreview';
+        targetPreview.textContent = targetUnlocked
+          ? (targetActive ? 'Axes highlighted — tank −20%' : 'Off')
+          : 'Flash-highlights both zero axes';
+        targetCard.appendChild(targetPreview);
+
+        const targetStatus = document.createElement('div');
+        targetStatus.className = 'themeStatus';
+        targetStatus.textContent = targetUnlocked ? (targetActive ? 'ON' : 'OFF') : '🔒';
+        targetCard.appendChild(targetStatus);
+
+        const targetAction = document.createElement('button');
+        targetAction.className = 'themeAction';
+        if (!targetUnlocked) {
+          targetAction.textContent = `${targetUnlockPrice.toLocaleString()} ⟲`;
+          targetAction.disabled = orbiton < targetUnlockPrice;
+          targetAction.addEventListener('click', buyTarget);
+        } else {
+          targetAction.textContent = targetActive ? 'Turn Off' : 'Turn On';
+          targetAction.addEventListener('click', toggleTarget);
+        }
+        targetCard.appendChild(targetAction);
+
+        themeGrid.appendChild(targetCard);
+      }
+
       if (!reducedRelationshipOptionsUnlocked) {
         const unlockCard = document.createElement('div');
         unlockCard.className = 'themeCard';
@@ -1914,7 +2010,7 @@
 
     function getOptionsForCurrentQuestion() {
       if (currentQuestionMode === 'directionChange') return directionOptions;
-      return shuffleArray([...relationshipOptions]);
+      return [...relationshipOptions];
     }
 
     function renderOptions() {
@@ -1998,10 +2094,19 @@
         orbiton = Math.max(0, orbiton - tollLoss);
         if (streakShields > 0) {
           streakShields -= 1;
+          currentQuestionRewardEligible = true;
           setOrbitonNotice(`Shield used. -${tollLoss} ⟲.`);
         } else {
-          correctStreak = 0;
-          setOrbitonNotice(`Toll paid: -${tollLoss} ⟲.`);
+          if (glyphThemes.cats.owned) {
+            correctStreak = Math.floor(correctStreak * 0.5);
+          } else if (glyphThemes.geology.owned) {
+            correctStreak = Math.floor(correctStreak * 0.4);
+          } else if (glyphThemes.rockets.owned) {
+            correctStreak = Math.floor(correctStreak * 0.2);
+          } else {
+            correctStreak = 0;
+          }
+          setOrbitonNotice(`Toll paid: -${tollLoss} ⟲. Streak → ${correctStreak}.`);
         }
         syncBackingMusicToRegentsMode();
         btn.blur();
@@ -2111,7 +2216,7 @@
           title: { text: `${xMeta.label} (${xMeta.unit})`, font: { family: vt323, size: labelFontSize, color: '#111827' }, standoff: 8 },
           range: currentAxisMode.flipX ? [xRangeMax, xRangeMin] : [xRangeMin, xRangeMax],
           showgrid: true, gridcolor: gridColor, gridwidth: 1,
-          zeroline: isNonlinear, zerolinecolor: '#111827', zerolinewidth: 2,
+          zeroline: isNonlinear || targetActive, zerolinecolor: '#111827', zerolinewidth: 2,
           tickfont: { family: vt323, size: tickFontSize, color: '#111827' },
           linecolor: '#111827', linewidth: 2, mirror: false,
           tick0: xRangeMin, dtick: xDtick, tickformat: '~r',
@@ -2123,7 +2228,7 @@
           title: { text: wrapText(`${yMeta.label} (${yMeta.unit})`, yLabelMaxChars), font: { family: vt323, size: labelFontSize, color: '#111827' }, standoff: 8 },
           range: currentAxisMode.flipY ? [yRangeMax, yRangeMin] : [yRangeMin, yRangeMax],
           showgrid: true, gridcolor: gridColor, gridwidth: 1,
-          zeroline: current.type === 'nonlinear', zerolinecolor: '#111827', zerolinewidth: 2,
+          zeroline: current.type === 'nonlinear' || targetActive, zerolinecolor: '#111827', zerolinewidth: 2,
           tickfont: { family: vt323, size: tickFontSize, color: '#111827' },
           linecolor: '#111827', linewidth: 2, mirror: false,
           tick0: yRangeMin, dtick: yDtick, tickformat: '~r',
@@ -2141,6 +2246,7 @@
       };
 
       Plotly.react(chartDiv, [trace], layout, config);
+      chartDiv.classList.toggle('target-active', targetActive);
     }
 
     // Unicode background
@@ -2170,6 +2276,7 @@
       cell = Math.max(18, Math.floor(bgW / 55));
       rows = Math.max(10, Math.ceil(bgH / cell) + 2);
       clearGlyphSpriteCache();
+      prewarmGlyphSpriteCache();
       initStreams();
     }
 
@@ -2185,8 +2292,9 @@
     function initStreams() {
       trails = [];
       streams = [];
-      const streamCount = currentGlyphTheme().isEmoji
-        ? Math.max(10, Math.floor(bgW / 110))
+      const isEmoji = currentGlyphTheme().isEmoji;
+      const streamCount = isEmoji
+        ? Math.max(6, Math.floor(bgW / 160))
         : Math.max(14, Math.floor(bgW / 70));
 
       for (let i = 0; i < streamCount; i++) {
@@ -2194,7 +2302,7 @@
           x: randomX(),
           row: -Math.floor(Math.random() * rows) - 1,
           char: randomGlyph(),
-          stepInterval: 0.06 + Math.random() * 0.12,
+          stepInterval: isEmoji ? (0.18 + Math.random() * 0.16) : (0.06 + Math.random() * 0.12),
           elapsed: 0,
           colorIndex: activeGlyphColorIndex
         });
@@ -2202,7 +2310,8 @@
     }
 
     function updateBg(dt) {
-      const fadeSeconds = currentGlyphTheme().isEmoji ? 2.2 : 4.8;
+      const emojiMode = currentGlyphTheme().isEmoji;
+      const fadeSeconds = emojiMode ? 1.0 : 4.8;
 
       for (const stream of streams) {
         stream.elapsed += dt;
@@ -2240,6 +2349,7 @@
       }
 
       trails = trails.filter(t => t.alpha > 0.02);
+      if (emojiMode && trails.length > 80) trails = trails.slice(-80);
     }
 
     function drawBg() {
