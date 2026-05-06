@@ -862,7 +862,21 @@
       "sulfate_thermal_areal_mole_register": { label: "Sulfate Thermal Areal Mole Register", unit: "mol SO₄·m²/K" },
       "methane_pressure_length_time_coefficient": { label: "Methane Pressure Length Time Coefficient", unit: "Pa·m CH₄/(s·mol)" },
       "oxygen_thermal_time_density_burden": { label: "Oxygen Thermal Time Density Burden", unit: "kg O₂·K/(m³·s)" },
-      "glucose_thermal_time_acceleration_load": { label: "Glucose Thermal Time Acceleration Load", unit: "mol C₆H₁₂O₆·K/s²" }
+      "glucose_thermal_time_acceleration_load": { label: "Glucose Thermal Time Acceleration Load", unit: "mol C₆H₁₂O₆·K/s²" },
+      "thermal_stress_accumulation": { label: "Thermal Stress Accumulation", unit: "K·d" },
+      "foliar_conductance_efficiency": { label: "Foliar Conductance Efficiency", unit: "FCEI" },
+      "salinity_osmotic_pressure": { label: "Salinity Osmotic Pressure", unit: "Pa·mol/m³" },
+      "hydraulic_root_conductance": { label: "Hydraulic Root Conductance", unit: "HRCU" },
+      "irradiance_saturation_index": { label: "Irradiance Saturation Index", unit: "ISIM" },
+      "chlorophyll_degradation_load": { label: "Chlorophyll Degradation Load", unit: "mg/m²" },
+      "ozone_photolytic_burden": { label: "Ozone Photolytic Burden", unit: "mol O₃/m²" },
+      "enzyme_reaction_efficiency": { label: "Enzyme Reaction Efficiency", unit: "EREI" },
+      "nitrogen_toxicity_index": { label: "Nitrogen Toxicity Index", unit: "NTIM" },
+      "metabolic_synthesis_rate": { label: "Metabolic Synthesis Rate", unit: "MSRQ" },
+      "ambient_thermal_excess": { label: "Ambient Thermal Excess", unit: "K" },
+      "stomatal_aperture_coefficient": { label: "Stomatal Aperture Coefficient", unit: "SACU" },
+      "pathogen_exposure_density": { label: "Pathogen Exposure Density", unit: "PEDU" },
+      "immune_response_efficiency": { label: "Immune Response Efficiency", unit: "IREI" }
     };
 
     const relationships = [
@@ -959,6 +973,15 @@
       { x: 'ammonium_radiative_surface_flux', y: 'carbon_dioxide_thermal_time_molar_drift', type: 'nonlinear', fn: x => 25 + Math.pow(x / 100, 2) * 75, xRange: [0, 100], yRange: [0, 100] },
       // power 1.7 through origin
       { x: 'glucose_thermal_time_acceleration_load', y: 'sulfate_thermal_areal_mole_register', type: 'nonlinear proportional', fn: x => Math.pow(x / 100, 1.7) * 100, xRange: [0, 100], yRange: [0, 100] },
+
+      // === DECREASING NONLINEAR — curves that decrease as x increases ===
+      { x: 'thermal_stress_accumulation', y: 'foliar_conductance_efficiency', type: 'nonlinear', fn: x => 90 - Math.pow(x / 100, 2) * 80, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'salinity_osmotic_pressure', y: 'hydraulic_root_conductance', type: 'nonlinear', fn: x => 100 - Math.pow(x / 100, 3) * 90, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'irradiance_saturation_index', y: 'chlorophyll_degradation_load', type: 'nonlinear', fn: x => 85 - Math.pow(x / 100, 1.5) * 75, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'ozone_photolytic_burden', y: 'enzyme_reaction_efficiency', type: 'nonlinear', fn: x => 80 - Math.pow(x / 100, 2) * 60, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'nitrogen_toxicity_index', y: 'metabolic_synthesis_rate', type: 'nonlinear', fn: x => 95 - Math.pow(x / 100, 2.5) * 85, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'ambient_thermal_excess', y: 'stomatal_aperture_coefficient', type: 'nonlinear', fn: x => 75 - Math.pow(x / 100, 1.7) * 65, xRange: [0, 100], yRange: [0, 100] },
+      { x: 'pathogen_exposure_density', y: 'immune_response_efficiency', type: 'nonlinear', fn: x => 70 - Math.pow(x / 100, 3) * 60, xRange: [0, 100], yRange: [0, 100] },
     ];
 
     const questionModes = ["relationshipType", "directionChange"];
@@ -1591,7 +1614,7 @@
     }
 
     function getDirectionAnswer() {
-      return current.type === 'negative linear/opposite (nonproportional)' ? 'Decreases' : 'Increases';
+      return current.fn(current.xRange[1]) > current.fn(current.xRange[0]) ? 'Increases' : 'Decreases';
     }
 
     function getCorrectAnswer() {
