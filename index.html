@@ -1083,6 +1083,71 @@
     let totalOrbitonSpent = 0;
     let streakShields = 0;
 
+    const SAVE_KEY = 'relationships_save';
+
+    function saveState() {
+      try {
+        localStorage.setItem(SAVE_KEY, JSON.stringify({
+          orbiton,
+          correctStreak,
+          peakStreak,
+          totalOrbitonSpent,
+          streakShields,
+          targetUnlocked,
+          targetActive,
+          reducedRelationshipOptionsUnlocked,
+          currentGlyphThemeKey,
+          audioMasterVolume,
+          activeGlyphColorIndex,
+          upgradeLevels: {
+            shield: upgradeItems.shield.level,
+            bonus: upgradeItems.bonus.level,
+            tankDelay: upgradeItems.tankDelay.level,
+            hedgeFund: upgradeItems.hedgeFund.level,
+            turtle: upgradeItems.turtle.level,
+            regentsModeEnabled: upgradeItems.regentsMode.enabled,
+          },
+          themeOwned: {
+            rockets: glyphThemes.rockets.owned,
+            geology: glyphThemes.geology.owned,
+            cats: glyphThemes.cats.owned,
+          }
+        }));
+      } catch (e) {}
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return;
+        const s = JSON.parse(raw);
+        if (typeof s.orbiton === 'number') orbiton = s.orbiton;
+        if (typeof s.correctStreak === 'number') correctStreak = s.correctStreak;
+        if (typeof s.peakStreak === 'number') peakStreak = s.peakStreak;
+        if (typeof s.totalOrbitonSpent === 'number') totalOrbitonSpent = s.totalOrbitonSpent;
+        if (typeof s.streakShields === 'number') streakShields = s.streakShields;
+        if (typeof s.targetUnlocked === 'boolean') targetUnlocked = s.targetUnlocked;
+        if (typeof s.targetActive === 'boolean') targetActive = s.targetActive;
+        if (typeof s.reducedRelationshipOptionsUnlocked === 'boolean') reducedRelationshipOptionsUnlocked = s.reducedRelationshipOptionsUnlocked;
+        if (typeof s.currentGlyphThemeKey === 'string' && glyphThemes[s.currentGlyphThemeKey]) currentGlyphThemeKey = s.currentGlyphThemeKey;
+        if (typeof s.audioMasterVolume === 'number') audioMasterVolume = clampVolume(s.audioMasterVolume);
+        if (typeof s.activeGlyphColorIndex === 'number') activeGlyphColorIndex = s.activeGlyphColorIndex;
+        if (s.upgradeLevels) {
+          if (typeof s.upgradeLevels.shield === 'number') upgradeItems.shield.level = s.upgradeLevels.shield;
+          if (typeof s.upgradeLevels.bonus === 'number') upgradeItems.bonus.level = s.upgradeLevels.bonus;
+          if (typeof s.upgradeLevels.tankDelay === 'number') upgradeItems.tankDelay.level = s.upgradeLevels.tankDelay;
+          if (typeof s.upgradeLevels.hedgeFund === 'number') upgradeItems.hedgeFund.level = s.upgradeLevels.hedgeFund;
+          if (typeof s.upgradeLevels.turtle === 'number') upgradeItems.turtle.level = s.upgradeLevels.turtle;
+          if (typeof s.upgradeLevels.regentsModeEnabled === 'boolean') upgradeItems.regentsMode.enabled = s.upgradeLevels.regentsModeEnabled;
+        }
+        if (s.themeOwned) {
+          if (typeof s.themeOwned.rockets === 'boolean') glyphThemes.rockets.owned = s.themeOwned.rockets;
+          if (typeof s.themeOwned.geology === 'boolean') glyphThemes.geology.owned = s.themeOwned.geology;
+          if (typeof s.themeOwned.cats === 'boolean') glyphThemes.cats.owned = s.themeOwned.cats;
+        }
+      } catch (e) {}
+    }
+
     const rightSound = new Audio('right.mp3');
     const wrongSound = new Audio('wrong.mp3');
     const musicTrackUrls = {
@@ -1342,6 +1407,7 @@
     function changeMasterVolume(delta) {
       audioMasterVolume = clampVolume(audioMasterVolume + delta);
       applyMasterVolume();
+      saveState();
     }
 
     async function startBackgroundMusic() {
@@ -1552,6 +1618,7 @@
       targetActive = !targetActive;
       renderShop();
       renderChart();
+      saveState();
     }
 
     function buyThreeOptionUnlock() {
@@ -1743,6 +1810,7 @@
       streakChip.dataset.shields = streakShields > 0 ? String(streakShields) : '';
       streakChip.classList.toggle('streakShielded', streakShields > 0);
       applyMasterVolume();
+      saveState();
     }
 
     function openShop() {
@@ -1763,6 +1831,7 @@
       initStreams();
       renderShop();
       setOrbitonNotice(`${glyphThemes[themeKey].name} equipped.`);
+      saveState();
     }
 
     function buyTheme(themeKey) {
@@ -2421,6 +2490,7 @@
     volumeDownButton.addEventListener('click', () => changeMasterVolume(-0.1));
     volumeUpButton.addEventListener('click', () => changeMasterVolume(0.1));
 
+    loadState();
     updateProgressUnlocks();
     updateOrbitonHud();
     updateRewardTankVisual();
