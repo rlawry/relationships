@@ -1713,7 +1713,8 @@
     }
 
     function getStreakStep() {
-      return 0.4 + (upgradeItems.bonus.level * 0.5);
+      const lvl = upgradeItems.bonus.level;
+      return 0.4 + lvl * 0.5 + lvl * lvl * 0.1;
     }
 
     function getTankDelayMs() {
@@ -1782,7 +1783,7 @@
 
     function getOrbitonReward(streak) {
       const catBonus = glyphThemes.cats.owned ? 10 : 1;
-      return Math.round(100 * (1 + Math.max(0, streak - 1) * getStreakStep()) * catBonus);
+      return Math.round(100 * (1 + Math.max(0, streak - 1) * getStreakStep() * catBonus));
     }
 
     function buyUpgrade(key) {
