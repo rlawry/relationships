@@ -1004,7 +1004,7 @@
     const shopUnlockOrbiton = 1000;
     const threeOptionUnlockPrice = 500000;
     let reducedRelationshipOptionsUnlocked = false;
-    const targetUnlockPrice = 100000;
+    const targetUnlockPrice = 5000;
     let targetUnlocked = false;
     let targetActive = false;
     const orbitonToll = 130;
@@ -1937,8 +1937,8 @@
         const targetPreview = document.createElement('div');
         targetPreview.className = 'themePreview';
         targetPreview.textContent = targetUnlocked
-          ? (targetActive ? 'Axes highlighted — tank −20%' : 'Off')
-          : 'Flash-highlights both zero axes';
+          ? (targetActive ? 'ON — zero axes flash. Tank starts 20% lower.' : 'OFF — zero axes flash. Tank starts 20% lower when on.')
+          : 'Flashes zero axes. Tank starts 20% lower while active.';
         targetCard.appendChild(targetPreview);
 
         const targetStatus = document.createElement('div');
