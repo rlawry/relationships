@@ -703,6 +703,73 @@
       font-size: 22px;
       line-height: 1.1;
     }
+
+    .resumeOverlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.90);
+      z-index: 100;
+      font-family: 'VT323', 'Courier New', monospace;
+    }
+    .resumeOverlay.open {
+      display: flex;
+    }
+    .resumeBox {
+      text-align: center;
+      max-width: 540px;
+      padding: 16px;
+    }
+    .resumeTitle {
+      font-size: 64px;
+      letter-spacing: 4px;
+      color: #00ff99;
+      text-shadow: 0 0 14px #00ff99;
+      margin-bottom: 12px;
+    }
+    .resumeWarning {
+      font-size: 28px;
+      color: #ff5555;
+      text-shadow: 0 0 10px #ff5555;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .resumeChoices {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      margin-top: 28px;
+    }
+    .resumeBtn {
+      background: transparent;
+      border: 2px solid #00ff99;
+      color: #00ff99;
+      font-family: 'VT323', 'Courier New', monospace;
+      font-size: 38px;
+      padding: 10px 36px;
+      cursor: pointer;
+      text-shadow: 0 0 8px #00ff99;
+      box-shadow: 0 0 8px rgba(0,255,153,0.4);
+      letter-spacing: 2px;
+      transition: background 0.1s;
+    }
+    .resumeBtn:hover {
+      background: rgba(0, 255, 153, 0.15);
+    }
+    .resumeBtn.danger {
+      border-color: #ff5555;
+      color: #ff5555;
+      text-shadow: 0 0 8px #ff5555;
+      box-shadow: 0 0 8px rgba(255,85,85,0.4);
+    }
+    .resumeBtn.danger:hover {
+      background: rgba(255, 85, 85, 0.15);
+    }
+    #resumeConfirmPanel {
+      display: none;
+    }
   </style>
 </head>
 
@@ -755,6 +822,26 @@
     <div class="orbitonBurstText" id="orbitonBurstText"></div>
   </div>
 
+
+  <div class="resumeOverlay" id="resumeOverlay">
+    <div class="resumeBox">
+      <div id="resumeMainPanel">
+        <div class="resumeTitle">RESUME...?</div>
+        <div class="resumeChoices">
+          <button class="resumeBtn" id="resumeYesBtn">( Y ) YES</button>
+          <button class="resumeBtn danger" id="resumeNoBtn">( N ) NO</button>
+        </div>
+      </div>
+      <div id="resumeConfirmPanel">
+        <div class="resumeWarning">ALL PROGRESS WILL BE LOST.</div>
+        <div class="resumeTitle" style="font-size:48px;">ARE YOU SURE?</div>
+        <div class="resumeChoices">
+          <button class="resumeBtn danger" id="resumeConfirmYesBtn">( Y ) YES</button>
+          <button class="resumeBtn" id="resumeConfirmNoBtn">( N ) NO</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <button class="tutorialBtn" id="tutorialButton" aria-label="Graph tutorial">?</button>
 
@@ -1081,6 +1168,14 @@
         basePrice: 0,
         growth: 1,
         preview: 'Toggle x-axis flipping at streak 40'
+      },
+      hardcorePlus: {
+        name: 'Hardcore+',
+        level: 1,
+        enabled: true,
+        basePrice: 0,
+        growth: 1,
+        preview: 'Negative axes at streak 100'
       }
     };
     let currentGlyphThemeKey = 'qbasic';
@@ -1100,13 +1195,17 @@
     let rewardTankLocked = false;
     let currentQuestionMaxReward = 100;
     let currentQuestionMinReward = 20;
-    let currentQuestionIsStrange = false;
+    let currentQuestionStrangeMultiplier = 1;
+    let currentQuestionStreakBoost = 1;
+    let currentNegativeRange = { negX: 0, negY: 0 };
+    let currentYInverted = false;
     let orbitonBurstTimer = null;
     let currentQuestionRewardEligible = true;
     let totalOrbitonSpent = 0;
     let streakShields = 0;
 
     const SAVE_KEY = 'relationships_save';
+    let pendingResumeData = null;
 
     function saveState() {
       try {
@@ -1129,12 +1228,19 @@
             hedgeFund: upgradeItems.hedgeFund.level,
             turtle: upgradeItems.turtle.level,
             regentsModeEnabled: upgradeItems.regentsMode.enabled,
+            hardcorePlusEnabled: upgradeItems.hardcorePlus.enabled,
           },
           themeOwned: {
             rockets: glyphThemes.rockets.owned,
             geology: glyphThemes.geology.owned,
             cats: glyphThemes.cats.owned,
-          }
+          },
+          lastQuestion: current ? {
+            key: current.x,
+            mode: currentQuestionMode,
+            axisMode: { flipX: currentAxisMode.flipX, flipY: currentAxisMode.flipY },
+            negativeRange: { negX: currentNegativeRange.negX, negY: currentNegativeRange.negY }
+          } : null
         }));
       } catch (e) {}
     }
@@ -1162,11 +1268,15 @@
           if (typeof s.upgradeLevels.hedgeFund === 'number') upgradeItems.hedgeFund.level = s.upgradeLevels.hedgeFund;
           if (typeof s.upgradeLevels.turtle === 'number') upgradeItems.turtle.level = s.upgradeLevels.turtle;
           if (typeof s.upgradeLevels.regentsModeEnabled === 'boolean') upgradeItems.regentsMode.enabled = s.upgradeLevels.regentsModeEnabled;
+          if (typeof s.upgradeLevels.hardcorePlusEnabled === 'boolean') upgradeItems.hardcorePlus.enabled = s.upgradeLevels.hardcorePlusEnabled;
         }
         if (s.themeOwned) {
           if (typeof s.themeOwned.rockets === 'boolean') glyphThemes.rockets.owned = s.themeOwned.rockets;
           if (typeof s.themeOwned.geology === 'boolean') glyphThemes.geology.owned = s.themeOwned.geology;
           if (typeof s.themeOwned.cats === 'boolean') glyphThemes.cats.owned = s.themeOwned.cats;
+        }
+        if (s.lastQuestion && typeof s.lastQuestion.key === 'string') {
+          pendingResumeData = s.lastQuestion;
         }
       } catch (e) {}
     }
@@ -1336,7 +1446,7 @@
 
     function getBackingTrackKeyForTier() {
       const tier = getCurrentRegentsTier();
-      if (tier === 'hardcore') return 'hardcore';
+      if (tier === 'hardcorePlus' || tier === 'hardcore') return 'hardcore';
       if (tier === 'normal') return 'normal';
       return 'basic';
     }
@@ -1514,9 +1624,9 @@
 
     function startRewardTank() {
       const nextStreak = correctStreak + 1;
-      const baseMaxReward = getOrbitonReward(nextStreak);
+      const baseMaxReward = getOrbitonReward(nextStreak, currentQuestionStreakBoost);
       const baseMinReward = Math.min(baseMaxReward, Math.round(Math.max(25, Math.round(baseMaxReward * 0.22)) * getHedgeFundMinMultiplier()));
-      const strangeMultiplier = currentQuestionIsStrange ? 20 : 1;
+      const strangeMultiplier = currentQuestionStrangeMultiplier;
       currentQuestionMaxReward = baseMaxReward * strangeMultiplier;
       currentQuestionMinReward = Math.min(currentQuestionMaxReward, baseMinReward * strangeMultiplier);
       rewardTankStartedAt = performance.now();
@@ -1562,7 +1672,12 @@
       return peakStreak >= 40;
     }
 
+    function isHardcorePlusAvailable() {
+      return peakStreak >= 100;
+    }
+
     function getCurrentRegentsTier() {
+      if (isHardcorePlusAvailable() && upgradeItems.hardcorePlus.enabled) return 'hardcorePlus';
       if (isHardcoreAvailable() && upgradeItems.regentsMode.enabled) return 'hardcore';
       if (isNormalAvailable()) return 'normal';
       return 'basic';
@@ -1570,6 +1685,7 @@
 
     function getRegentsHudLabel() {
       const tier = getCurrentRegentsTier();
+      if (tier === 'hardcorePlus') return 'HARDCORE+';
       if (tier === 'hardcore') return 'HARDCORE';
       if (tier === 'normal') return 'NORMAL';
       return 'BASIC';
@@ -1577,6 +1693,7 @@
 
     function getGraphBackgroundColor() {
       const tier = getCurrentRegentsTier();
+      if (tier === 'hardcorePlus') return '#ede0ff';
       if (tier === 'hardcore') return '#ffe0e0';
       if (tier === 'normal') return '#ccffcc';
       return '#ffffff';
@@ -1597,11 +1714,23 @@
 
       current = next;
       const regentsTier = getCurrentRegentsTier();
-      currentQuestionIsStrange = regentsTier === 'hardcore';
+      currentYInverted = regentsTier === 'hardcorePlus';
+      currentQuestionStrangeMultiplier = regentsTier === 'hardcorePlus' ? 100 : (regentsTier === 'hardcore' ? 20 : 1);
+      currentQuestionStreakBoost = regentsTier === 'hardcorePlus' ? 2 : 1;
+      const isAdvanced = regentsTier === 'hardcore' || regentsTier === 'hardcorePlus';
       currentAxisMode = {
-        flipX: regentsTier === 'hardcore' && Math.random() < 0.5,
-        flipY: regentsTier === 'hardcore' ? Math.random() < 0.5 : regentsTier === 'normal' ? Math.random() < 0.5 : false
+        flipX: isAdvanced && Math.random() < 0.5,
+        flipY: isAdvanced ? Math.random() < 0.5 : regentsTier === 'normal' ? Math.random() < 0.5 : false
       };
+      if (regentsTier === 'hardcorePlus') {
+        const opts = [15, 20, 25];
+        currentNegativeRange = {
+          negX: 0,
+          negY: opts[Math.floor(Math.random() * opts.length)]
+        };
+      } else {
+        currentNegativeRange = { negX: 0, negY: 0 };
+      }
       currentQuestionMode = questionModes[Math.floor(Math.random() * questionModes.length)];
       currentCorrectAnswer = getCorrectAnswer();
       currentQuestionRewardEligible = true;
@@ -1611,16 +1740,26 @@
       renderChart();
       renderQuestion();
       renderOptions();
+      saveState();
     }
 
     function getDirectionAnswer() {
-      return current.fn(current.xRange[1]) > current.fn(current.xRange[0]) ? 'Increases' : 'Decreases';
+      const increases = current.fn(current.xRange[1]) > current.fn(current.xRange[0]);
+      return (currentYInverted ? !increases : increases) ? 'Increases' : 'Decreases';
     }
 
     function getCorrectAnswer() {
       if (currentQuestionMode === 'directionChange') return getDirectionAnswer();
-      if (current.type === 'nonlinear proportional') return 'proportional';
-      return current.type;
+      if (!currentYInverted) {
+        if (current.type === 'nonlinear proportional') return 'proportional';
+        return current.type;
+      }
+      switch (current.type) {
+        case 'positive linear (nonproportional)': return 'negative linear/opposite (nonproportional)';
+        case 'proportional':                      return 'negative linear/opposite (nonproportional)';
+        case 'negative linear/opposite (nonproportional)': return 'positive linear (nonproportional)';
+        default: return 'nonlinear'; // nonlinear and nonlinear proportional → curve, not through origin
+      }
     }
 
     function updateProgressUnlocks() {
@@ -1804,14 +1943,23 @@
       renderChart();
     }
 
-    function getOrbitonReward(streak) {
+    function toggleHardcorePlus() {
+      if (!isHardcorePlusAvailable()) return;
+      upgradeItems.hardcorePlus.enabled = !upgradeItems.hardcorePlus.enabled;
+      syncBackingMusicToRegentsMode();
+      updateOrbitonHud();
+      renderShop();
+      renderChart();
+    }
+
+    function getOrbitonReward(streak, streakBoost = 1) {
       const catBonus = glyphThemes.cats.owned ? 10 : 1;
-      return Math.round(100 * (1 + Math.max(0, streak - 1) * getStreakStep() * catBonus));
+      return Math.round(100 * (1 + Math.max(0, streak - 1) * getStreakStep() * streakBoost * catBonus));
     }
 
     function buyUpgrade(key) {
       const item = upgradeItems[key];
-      if (key === 'regentsMode') return;
+      if (key === 'regentsMode' || key === 'hardcorePlus') return;
       const price = getUpgradePrice(key);
       if (orbiton < price) return;
       spendOrbitonInShop(price);
@@ -1835,6 +1983,77 @@
       streakChip.classList.toggle('streakShielded', streakShields > 0);
       applyMasterVolume();
       saveState();
+    }
+
+    function showResumeScreen() {
+      document.getElementById('resumeMainPanel').style.display = '';
+      document.getElementById('resumeConfirmPanel').style.display = 'none';
+      document.getElementById('resumeOverlay').classList.add('open');
+    }
+
+    function hideResumeScreen() {
+      document.getElementById('resumeOverlay').classList.remove('open');
+    }
+
+    function resumeGame() {
+      const rel = relationships.find(r => r.x === pendingResumeData.key);
+      hideResumeScreen();
+      if (!rel) {
+        pickRandomRelationship();
+        return;
+      }
+      clearTimeout(advanceTimer);
+      answeredCorrectly = false;
+      current = rel;
+      const regentsTier = getCurrentRegentsTier();
+      currentYInverted = regentsTier === 'hardcorePlus';
+      currentQuestionStrangeMultiplier = regentsTier === 'hardcorePlus' ? 100 : (regentsTier === 'hardcore' ? 20 : 1);
+      currentQuestionStreakBoost = regentsTier === 'hardcorePlus' ? 2 : 1;
+      currentAxisMode = pendingResumeData.axisMode || { flipX: false, flipY: false };
+      currentNegativeRange = pendingResumeData.negativeRange || { negX: 0, negY: 0 };
+      currentQuestionMode = pendingResumeData.mode || 'relationshipType';
+      currentCorrectAnswer = getCorrectAnswer();
+      currentQuestionRewardEligible = false;
+      rewardTankRatio = 0;
+      rewardTankLocked = true;
+      updateRewardTankVisual();
+      renderTitle();
+      renderChart();
+      renderQuestion();
+      renderOptions();
+    }
+
+    function resetAllProgress() {
+      try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+      orbiton = 0;
+      correctStreak = 0;
+      peakStreak = 0;
+      totalOrbitonSpent = 0;
+      streakShields = 0;
+      targetUnlocked = false;
+      targetActive = false;
+      reducedRelationshipOptionsUnlocked = false;
+      audioMasterVolume = 0.55;
+      activeGlyphColorIndex = 0;
+      upgradeItems.shield.level = 0;
+      upgradeItems.bonus.level = 0;
+      upgradeItems.tankDelay.level = 0;
+      upgradeItems.hedgeFund.level = 0;
+      upgradeItems.turtle.level = 0;
+      upgradeItems.regentsMode.enabled = true;
+      upgradeItems.hardcorePlus.enabled = true;
+      glyphThemes.rockets.owned = false;
+      glyphThemes.geology.owned = false;
+      glyphThemes.cats.owned = false;
+      currentGlyphThemeKey = 'qbasic';
+      clearGlyphSpriteCache();
+      prewarmGlyphSpriteCache();
+      initStreams();
+      applyMasterVolume();
+      updateOrbitonHud();
+      renderShop();
+      hideResumeScreen();
+      pickRandomRelationship();
     }
 
     function openShop() {
@@ -1919,7 +2138,7 @@
       };
 
       Object.entries(upgradeItems).forEach(([key, item]) => {
-        if (key === 'regentsMode') return;
+        if (key === 'regentsMode' || key === 'hardcorePlus') return;
         const priceValue = getUpgradePrice(key);
         const label = upgradeLabels[key] || { name: item.name, preview: () => item.preview };
 
@@ -1978,6 +2197,15 @@
         isHardcoreAvailable() ? (upgradeItems.regentsMode.enabled ? 'Off' : 'On') : 'Unavailable',
         isHardcoreAvailable() ? (() => toggleRegentsMode()) : null,
         !isHardcoreAvailable()
+      );
+
+      addRegentsTierCard(
+        '↕↔⊕ Hardcore+',
+        isHardcorePlusAvailable() ? 'Neg. axes · ×100 rewards' : 'Unlock at streak 100',
+        getRegentsStoreStatus('hardcorePlus') || '—',
+        isHardcorePlusAvailable() ? (upgradeItems.hardcorePlus.enabled ? 'Off' : 'On') : 'Unavailable',
+        isHardcorePlusAvailable() ? (() => toggleHardcorePlus()) : null,
+        !isHardcorePlusAvailable()
       );
 
       Object.entries(glyphThemes).forEach(([themeKey, theme]) => {
@@ -2256,10 +2484,13 @@
       }
       // For nonlinear graphs, extend both axes to include the origin so the
       // curve's relationship to (0,0) is always visible.
+      // In hardcore+ mode, extend axes into negative territory.
       const isNonlinear = current.type === 'nonlinear';
-      const xRangeMin = isNonlinear ? Math.min(0, xmin) : xmin;
+      const negX = currentNegativeRange.negX;
+      const negY = currentNegativeRange.negY;
+      const xRangeMin = negX > 0 ? -negX : (isNonlinear ? Math.min(0, xmin) : xmin);
       const xRangeMax = isNonlinear ? Math.max(0, xmax) : xmax;
-      const yRangeMin = isNonlinear ? Math.min(0, ymin) : ymin;
+      const yRangeMin = negY > 0 ? -negY : (isNonlinear ? Math.min(0, ymin) : ymin);
       const yRangeMax = isNonlinear ? Math.max(0, ymax) : ymax;
 
       const xDtick = calcDtick(xRangeMin, xRangeMax, tickCount);
@@ -2273,14 +2504,14 @@
       const xs = [], ys = [];
       for (let i = 0; i <= steps; i++) {
         const x = xmin + (i / steps) * (xmax - xmin);
-        const y = Math.max(ymin, Math.min(ymax, current.fn(x)));
+        const rawY = Math.max(ymin, Math.min(ymax, current.fn(x)));
         xs.push(x);
-        ys.push(y);
+        ys.push(currentYInverted ? ymax - rawY + ymin : rawY);
       }
 
       const bgColor = getGraphBackgroundColor();
       const tier = getCurrentRegentsTier();
-      const gridColor = tier === 'normal' ? '#88cc88' : tier === 'hardcore' ? '#cc8888' : '#ececf2';
+      const gridColor = tier === 'hardcorePlus' ? '#aa88ee' : tier === 'normal' ? '#88cc88' : tier === 'hardcore' ? '#cc8888' : '#ececf2';
 
       const trace = {
         x: xs,
@@ -2309,7 +2540,7 @@
           title: { text: `${xMeta.label} (${xMeta.unit})`, font: { family: vt323, size: labelFontSize, color: '#111827' }, standoff: 8 },
           range: currentAxisMode.flipX ? [xRangeMax, xRangeMin] : [xRangeMin, xRangeMax],
           showgrid: true, gridcolor: gridColor, gridwidth: 1,
-          zeroline: isNonlinear || targetActive, zerolinecolor: '#111827', zerolinewidth: 2,
+          zeroline: isNonlinear || targetActive || negX > 0, zerolinecolor: '#111827', zerolinewidth: 2,
           tickfont: { family: vt323, size: tickFontSize, color: '#111827' },
           linecolor: '#111827', linewidth: 2, mirror: false,
           tick0: xRangeMin, dtick: xDtick, tickformat: '~r',
@@ -2321,10 +2552,10 @@
           title: { text: wrapText(`${yMeta.label} (${yMeta.unit})`, yLabelMaxChars), font: { family: vt323, size: labelFontSize, color: '#111827' }, standoff: 8 },
           range: currentAxisMode.flipY ? [yRangeMax, yRangeMin] : [yRangeMin, yRangeMax],
           showgrid: true, gridcolor: gridColor, gridwidth: 1,
-          zeroline: current.type === 'nonlinear' || targetActive, zerolinecolor: '#111827', zerolinewidth: 2,
+          zeroline: true, zerolinecolor: '#111827', zerolinewidth: 2,
           tickfont: { family: vt323, size: tickFontSize, color: '#111827' },
           linecolor: '#111827', linewidth: 2, mirror: false,
-          tick0: yRangeMin, dtick: yDtick, tickformat: '~r',
+          tick0: 0, dtick: yDtick, tickformat: '~r',
           ticks: 'outside', ticklen: 5, tickwidth: 1, tickcolor: '#111827',
           automargin: true
         },
@@ -2514,6 +2745,17 @@
     volumeDownButton.addEventListener('click', () => changeMasterVolume(-0.1));
     volumeUpButton.addEventListener('click', () => changeMasterVolume(0.1));
 
+    document.getElementById('resumeYesBtn').addEventListener('click', resumeGame);
+    document.getElementById('resumeNoBtn').addEventListener('click', () => {
+      document.getElementById('resumeMainPanel').style.display = 'none';
+      document.getElementById('resumeConfirmPanel').style.display = '';
+    });
+    document.getElementById('resumeConfirmYesBtn').addEventListener('click', resetAllProgress);
+    document.getElementById('resumeConfirmNoBtn').addEventListener('click', () => {
+      document.getElementById('resumeMainPanel').style.display = '';
+      document.getElementById('resumeConfirmPanel').style.display = 'none';
+    });
+
     loadState();
     updateProgressUnlocks();
     updateOrbitonHud();
@@ -2521,7 +2763,12 @@
     resizeBg();
     requestAnimationFrame(animateBg);
     renderShop();
-    pickRandomRelationship();
+
+    if (pendingResumeData) {
+      showResumeScreen();
+    } else {
+      pickRandomRelationship();
+    }
   </script>
 </body>
 
