@@ -2025,35 +2025,7 @@
 
     function resetAllProgress() {
       try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
-      orbiton = 0;
-      correctStreak = 0;
-      peakStreak = 0;
-      totalOrbitonSpent = 0;
-      streakShields = 0;
-      targetUnlocked = false;
-      targetActive = false;
-      reducedRelationshipOptionsUnlocked = false;
-      audioMasterVolume = 0.55;
-      activeGlyphColorIndex = 0;
-      upgradeItems.shield.level = 0;
-      upgradeItems.bonus.level = 0;
-      upgradeItems.tankDelay.level = 0;
-      upgradeItems.hedgeFund.level = 0;
-      upgradeItems.turtle.level = 0;
-      upgradeItems.regentsMode.enabled = true;
-      upgradeItems.hardcorePlus.enabled = true;
-      glyphThemes.rockets.owned = false;
-      glyphThemes.geology.owned = false;
-      glyphThemes.cats.owned = false;
-      currentGlyphThemeKey = 'qbasic';
-      clearGlyphSpriteCache();
-      prewarmGlyphSpriteCache();
-      initStreams();
-      applyMasterVolume();
-      updateOrbitonHud();
-      renderShop();
-      hideResumeScreen();
-      pickRandomRelationship();
+      window.location.reload();
     }
 
     function openShop() {
