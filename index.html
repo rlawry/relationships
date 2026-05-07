@@ -2024,7 +2024,7 @@
     }
 
     function resetAllProgress() {
-      try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+      try { localStorage.removeItem(SAVE_KEY); console.log("cleared");} catch (e) {}
       window.location.reload();
     }
 
@@ -2720,12 +2720,16 @@
     document.getElementById('resumeYesBtn').addEventListener('click', resumeGame);
     document.getElementById('resumeNoBtn').addEventListener('click', () => {
       document.getElementById('resumeMainPanel').style.display = 'none';
-      document.getElementById('resumeConfirmPanel').style.display = '';
+      document.getElementById('resumeConfirmPanel').style.display = 'block';
     });
-    document.getElementById('resumeConfirmYesBtn').addEventListener('click', resetAllProgress);
     document.getElementById('resumeConfirmNoBtn').addEventListener('click', () => {
-      document.getElementById('resumeMainPanel').style.display = '';
+      document.getElementById('resumeMainPanel').style.display = 'block';
       document.getElementById('resumeConfirmPanel').style.display = 'none';
+    });
+    document.getElementById('resumeConfirmYesBtn').addEventListener('click', () => {
+      document.getElementById('resumeMainPanel').style.display = 'none';
+      document.getElementById('resumeConfirmPanel').style.display = 'none';
+      resetAllProgress();
     });
 
     loadState();
